@@ -7,6 +7,8 @@ import Header from "./components/Header";
 function App() {
   const [tasks, setTasks] = useState([]);
 
+  // Fetch tasks from the server when the component mounts
+  // and whenever the tasks state changes
   useEffect(() => {
     fetch("http://localhost:3001/tasks")
       .then((res) => res.json())

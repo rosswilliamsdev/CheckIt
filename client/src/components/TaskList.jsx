@@ -4,6 +4,10 @@ import TaskItem from "./TaskItem";
 function TaskList({ tasks, setTasks }) {
   const [expandedTaskId, setExpandedTaskId] = useState(null);
 
+  function onDelete(task) {
+    setTasks((prev) => prev.filter((t) => t.id !== task.id));
+  }
+
   const toggleExpanded = (id) => {
     setExpandedTaskId((prev) => (prev === id ? null : id));
   };
@@ -19,9 +23,7 @@ function TaskList({ tasks, setTasks }) {
             <TaskItem
               key={task.id}
               task={task}
-              onDelete={() => {
-                setTasks((prev) => prev.filter((t) => t.id !== task.id));
-              }}
+              onDelete={() => onDelete(task)}
               isExpanded={expandedTaskId === task.id}
               onToggleExpand={() => toggleExpanded(task.id)}
             />

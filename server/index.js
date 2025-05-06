@@ -7,7 +7,7 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 
-// Connect to SQLite database
+// Connect to the database, called checkit.db
 const db = new sqlite3.Database("./checkit.db", (err) => {
   if (err) {
     console.error("Error connecting to the database:", err.message);
@@ -16,7 +16,7 @@ const db = new sqlite3.Database("./checkit.db", (err) => {
   }
 });
 
-// Seed sample data
+// Seed some sample data
 db.serialize(() => {
   // Seed user
   db.run(
@@ -37,7 +37,7 @@ db.serialize(() => {
     (1, 2, 'Grocery shopping', 'Buy groceries for the week', 'pending', 'medium', 'Home', '2025-05-03', '2025-05-03', 'weekly', '2025-05-02')`);
 
   // Seed checklist for task 1
-  db.run(`INSERT INTO checklists (taskId, content, isDone) VALUES 
+  db.run(`INSERT INTO checklist_items (taskId, content, isDone) VALUES 
     (1, 'Collect data', 1),
     (1, 'Write summary', 0),
     (1, 'Review with team', 0)`);
@@ -56,8 +56,8 @@ app.get("/tasks", (req, res) => {
     SELECT 
       tasks.*, 
       projects.title AS projectTitle,
-      (SELECT COUNT(*) FROM checklists WHERE taskId = tasks.id AND isDone = 1) AS completedSubtasks,
-      (SELECT COUNT(*) FROM checklists WHERE taskId = tasks.id) AS totalSubtasks
+      (SELECT COUNT(*) FROM checklist_items WHERE taskId = tasks.id AND isDone = 1) AS completedSubtasks,
+      (SELECT COUNT(*) FROM checklist_items WHERE taskId = tasks.id) AS totalSubtasks
     FROM tasks
     LEFT JOIN projects ON tasks.projectId = projects.id
     ORDER BY dateCreated DESC
@@ -203,7 +203,7 @@ app.get("/tasks/:id/checklist", (req, res) => {
     }
 
     // If task exists, fetch checklist
-    const sql = `SELECT * FROM checklists WHERE taskId = ?`;
+    const sql = `SELECT * FROM checklist_items WHERE taskId = ?`;
     db.all(sql, [id], (err, rows) => {
       if (err) {
         console.error("Error fetching checklist:", err.message);
@@ -220,7 +220,7 @@ app.post("/tasks/:id/checklist", (req, res) => {
   const { id } = req.params;
   const { content, isDone } = req.body;
 
-  const sql = `INSERT INTO checklists (taskId, content, isDone) VALUES (?, ?, ?)`;
+  const sql = `INSERT INTO checklist_items (taskId, content, isDone) VALUES (?, ?, ?)`;
   db.run(sql, [id, content, isDone ? 1 : 0], function (err) {
     if (err) {
       console.error("Error adding checklist item:", err.message);
@@ -238,7 +238,7 @@ app.put("/checklist/:id", (req, res) => {
 
   if (content === undefined) {
     // Only update isDone
-    const sql = `UPDATE checklists SET isDone = ? WHERE id = ?`;
+    const sql = `UPDATE checklist_items SET isDone = ? WHERE id = ?`;
     db.run(sql, [isDone ? 1 : 0, id], function (err) {
       if (err) {
         console.error("Error updating checklist item:", err.message);
@@ -249,7 +249,7 @@ app.put("/checklist/:id", (req, res) => {
     });
   } else {
     // Update both fields
-    const sql = `UPDATE checklists SET content = ?, isDone = ? WHERE id = ?`;
+    const sql = `UPDATE checklist_items SET content = ?, isDone = ? WHERE id = ?`;
     db.run(sql, [content, isDone ? 1 : 0, id], function (err) {
       if (err) {
         console.error("Error updating checklist item:", err.message);
@@ -265,7 +265,7 @@ app.put("/checklist/:id", (req, res) => {
 app.delete("/checklist/:id", (req, res) => {
   const { id } = req.params;
 
-  const sql = `DELETE FROM checklists WHERE id = ?`;
+  const sql = `DELETE FROM checklist_items WHERE id = ?`;
   db.run(sql, [id], function (err) {
     if (err) {
       console.error("Error deleting checklist item:", err.message);

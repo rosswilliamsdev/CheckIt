@@ -1,21 +1,15 @@
 import React from "react";
 import Checklist from "./Checklist";
+import { deleteTask } from "../api/tasks";
 
 function TaskItem({ task, onDelete, isExpanded, onToggleExpand }) {
-  function handleDelete() {
-    fetch(`http://localhost:3001/tasks/${task.id}`, {
-      method: "DELETE",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to delete task");
-        }
-      })
-      .then(() => {
-        onDelete();
-        console.log("Task deleted successfully");
-      })
-      .catch((err) => console.error("Error deleting task:", err));
+  async function handleDelete() {
+    try {
+      await deleteTask(task.id);
+      onDelete();
+    } catch (err) {
+      console.error("error deleting task", err);
+    }
   }
 
   return (
