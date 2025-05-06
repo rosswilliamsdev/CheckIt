@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { submitTask } from "../api/tasks";
 
 function TaskForm({ setTasks }) {
   const [formData, setFormData] = useState({
@@ -16,28 +17,20 @@ function TaskForm({ setTasks }) {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:3001/tasks", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => res.json())
-      .then((newTask) => {
-        setTasks((prevTasks) => [...prevTasks, newTask]);
-        setFormData({
-          title: "",
-          description: "",
-          priority: "medium",
-          dueDate: "",
-          status: "pending",
-          userId: 1, // a static userId for simplicity, replace with actual user ID logic
-          dateCreated: new Date().toISOString().split("T")[0],
-        });
-      })
-      .catch((err) => console.error("Error creating task:", err));
+    const newTask = await submitTask(formData);
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setFormData({
+      title: "",
+      description: "",
+      priority: "medium",
+      dueDate: "",
+      status: "pending",
+      userId: 1, // a static userId for simplicity, replace with actual user ID logic
+      dateCreated: new Date().toISOString().split("T")[0],
+    });
   };
 
   return (
