@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TaskItem from "./TaskItem";
 
-function TaskList({ onDelete, tasks }) {
+function TaskList({ tasks, setTasks }) {
   const [expandedTaskId, setExpandedTaskId] = useState(null);
 
   const toggleExpanded = (id) => {
@@ -19,7 +19,9 @@ function TaskList({ onDelete, tasks }) {
             <TaskItem
               key={task.id}
               task={task}
-              onDelete={onDelete}
+              onDelete={() => {
+                setTasks((prev) => prev.filter((t) => t.id !== task.id));
+              }}
               isExpanded={expandedTaskId === task.id}
               onToggleExpand={() => toggleExpanded(task.id)}
             />

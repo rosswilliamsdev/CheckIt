@@ -5,12 +5,7 @@ import TaskForm from "./components/TaskForm";
 import Header from "./components/Header";
 
 function App() {
-  const [refresh, setRefresh] = useState(false);
   const [tasks, setTasks] = useState([]);
-
-  const onRefresh = () => {
-    setRefresh((prev) => !prev);
-  };
 
   useEffect(() => {
     fetch("http://localhost:3001/tasks")
@@ -23,7 +18,7 @@ function App() {
     <div className=" p-5 container">
       <Header />
       <TaskForm setTasks={setTasks} />
-      <TaskList onDelete={onRefresh} tasks={tasks} />
+      <TaskList setTasks={setTasks} tasks={tasks} />
     </div>
   );
 }
