@@ -6,7 +6,7 @@ import {
   updateChecklistContent,
 } from "../api/checklist";
 
-function Checklist({ taskId }) {
+function Checklist({ taskId, onStatusChange }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
@@ -71,6 +71,22 @@ function Checklist({ taskId }) {
       .catch((err) => console.error(err.message))
       .finally(() => setLoading(false));
   }, [taskId]);
+
+  useEffect(() => {
+    if (!onStatusChange) return;
+
+    const total = items.length;
+    const completed = items.filter((i) => i.isDone).length;
+
+    let newStatus = "pending";
+    if (total > 0 && completed === total) {
+      newStatus = "completed";
+    } else if (completed > 0) {
+      newStatus = "in_progress";
+    }
+
+    onStatusChange(newStatus);
+  }, [items, onStatusChange]);
 
   if (loading) return <p>Loading checklist...</p>;
 

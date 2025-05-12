@@ -1,8 +1,10 @@
 import React from "react";
+import { useState } from "react";
 import Checklist from "./Checklist";
 import { deleteTask } from "../api/tasks";
 
 function TaskItem({ task, onDelete, isExpanded, onToggleExpand }) {
+  const [status, setStatus] = useState(task.status);
   async function handleDelete() {
     try {
       await deleteTask(task.id);
@@ -10,6 +12,10 @@ function TaskItem({ task, onDelete, isExpanded, onToggleExpand }) {
     } catch (err) {
       console.error("error deleting task", err);
     }
+  }
+
+  function handleStatusChange(newStatus) {
+    setStatus(newStatus);
   }
 
   return (
@@ -34,16 +40,17 @@ function TaskItem({ task, onDelete, isExpanded, onToggleExpand }) {
           </small>
           <span
             className={`badge border border-black mx-2 ${
-              task.status === "completed"
+              status === "completed"
                 ? "bg-success"
-                : task.status === "in_progress"
+                : status === "in_progress"
                 ? "bg-warning text-dark"
                 : "bg-secondary"
             }`}
+            style={{ minWidth: "100px" }}
           >
-            {task.status === "completed"
+            {status === "completed"
               ? "Completed"
-              : task.status === "in_progress"
+              : status === "in_progress"
               ? "In Progress"
               : "Pending"}
           </span>
@@ -56,11 +63,9 @@ function TaskItem({ task, onDelete, isExpanded, onToggleExpand }) {
           <i className="bi bi-trash"></i>
         </button>
       </div>
-      {isExpanded && (
-        <div className="mt-3">
-          <Checklist taskId={task.id} />
-        </div>
-      )}
+      <div className="mt-3" style={{ display: isExpanded ? "block" : "none" }}>
+        <Checklist taskId={task.id} onStatusChange={handleStatusChange} />
+      </div>
     </li>
   );
 }

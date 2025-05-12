@@ -23,4 +23,18 @@ async function deleteTask(taskId) {
   }
 }
 
-export { deleteTask, submitTask };
+async function updateTaskStatus(id, status) {
+  const res = await fetch(`http://localhost:3001/tasks/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to update task status");
+  }
+
+  return await res.json();
+}
+
+export { deleteTask, submitTask, updateTaskStatus };

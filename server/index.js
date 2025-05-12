@@ -281,3 +281,20 @@ app.delete("/checklist/:id", (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+// PATCH endpoint to update only the status of a task
+app.patch("/tasks/:id/status", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const sql = `UPDATE tasks SET status = ? WHERE id = ?`;
+
+  db.run(sql, [status, id], function (err) {
+    if (err) {
+      console.error("Error updating task status:", err.message);
+      res.status(500).json({ error: "Failed to update task status" });
+    } else {
+      res.status(200).json({ message: "Task status updated", id, status });
+    }
+  });
+});
