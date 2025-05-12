@@ -1,3 +1,13 @@
+async function createChecklistItem(taskId, content) {
+  const res = await fetch(`http://localhost:3001/tasks/${taskId}/checklist`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content, isDone: 0 }),
+  });
+  if (!res.ok) throw new Error("Failed to add checklist item");
+  return await res.json();
+}
+
 async function deleteChecklistItem(id) {
   fetch(`http://localhost:3001/checklist/${id}`, {
     method: "DELETE",
@@ -38,4 +48,9 @@ async function updateChecklistContent(id, content) {
   return await res.json();
 }
 
-export { deleteChecklistItem, toggleChecklistItem, updateChecklistContent };
+export {
+  createChecklistItem,
+  deleteChecklistItem,
+  toggleChecklistItem,
+  updateChecklistContent,
+};

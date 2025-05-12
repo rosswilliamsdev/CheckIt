@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createChecklistItem } from "../api/checklist";
 
 function ChecklistItemForm({ taskId, onAdd }) {
   const [content, setContent] = useState("");
@@ -7,15 +8,7 @@ function ChecklistItemForm({ taskId, onAdd }) {
     e.preventDefault();
     if (!content.trim()) return;
 
-    fetch(`http://localhost:3001/tasks/${taskId}/checklist`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content, isDone: 0 }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to add checklist item");
-        return res.json();
-      })
+    createChecklistItem(taskId, content)
       .then((newItem) => {
         onAdd(newItem);
         setContent("");
