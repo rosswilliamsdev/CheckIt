@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import ChecklistItemForm from "./ChecklistItemForm";
-import { deleteChecklistItem } from "../api/checklist";
+import {
+  deleteChecklistItem,
+  toggleChecklistItem,
+  updateChecklistContent,
+} from "../api/checklist";
 
 function Checklist({ taskId }) {
   const [items, setItems] = useState([]);
@@ -21,30 +25,20 @@ function Checklist({ taskId }) {
     }
   }
 
-  const handleCheck = (itemId) => {
-    console.log("Sending update:", {
-      isDone: items.find((i) => i.id === itemId).isDone ? 0 : 1,
-    });
-    console.log("Updating checklist item ID:", itemId);
-    fetch(`http://localhost:3001/checklist/${itemId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        isDone: items.find((i) => i.id === itemId).isDone ? 0 : 1,
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to update checklist item");
-        return res.json();
-      })
-      .then((updatedItem) => {
-        setItems((prev) =>
-          prev.map((i) =>
-            i.id === itemId ? { ...i, isDone: updatedItem.isDone } : i
-          )
-        );
-      })
-      .catch((err) => console.error(err));
+  const handleCheck = async (itemId) => {
+    const item = items.find((i) => i.id === itemId);
+    if (!item) return;
+
+    try {
+      const updatedItem = await toggleChecklistItem(item);
+      setItems((prev) =>
+        prev.map((i) =>
+          i.id === itemId ? { ...i, isDone: updatedItem.isDone } : i
+        )
+      );
+    } catch (err) {
+      console.error("Error toggling checklist item:", err);
+    }
   };
 
   const handleEdit = (id, content) => {
@@ -52,26 +46,19 @@ function Checklist({ taskId }) {
     setEditedContent(content);
   };
 
-  const handleEditSubmit = (id) => {
-    fetch(`http://localhost:3001/checklist/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: editedContent }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to update checklist item");
-        return res.json();
-      })
-      .then((updatedItem) => {
-        setItems((prev) =>
-          prev.map((i) =>
-            i.id === id ? { ...i, content: updatedItem.content } : i
-          )
-        );
-        setEditingId(null);
-        setEditedContent("");
-      })
-      .catch((err) => console.error(err));
+  const handleEditSubmit = async (id) => {
+    try {
+      const updatedItem = await updateChecklistContent(id, editedContent);
+      setItems((prev) =>
+        prev.map((i) =>
+          i.id === id ? { ...i, content: updatedItem.content } : i
+        )
+      );
+      setEditingId(null);
+      setEditedContent("");
+    } catch (err) {
+      console.error("Failed to update checklist item", err);
+    }
   };
 
   useEffect(() => {
