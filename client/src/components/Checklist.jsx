@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
 import ChecklistItemForm from "./ChecklistItemForm";
+import { deleteChecklistItem } from "../api/checklist";
 
 function Checklist({ taskId }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
 
-  const handleDelete = (id) => {
-    fetch(`http://localhost:3001/checklist/${id}`, {
-      method: "DELETE",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to delete checklist item");
-        setItems((prev) => prev.filter((i) => i.id !== id));
-      })
-      .catch((err) => console.error(err));
-  };
+  function onDelete(checklistItem) {
+    setItems((prev) => prev.filter((c) => c.id !== checklistItem.id));
+  }
+
+  async function handleDelete(checklistItem) {
+    try {
+      await deleteChecklistItem(checklistItem.id);
+      onDelete(checklistItem);
+    } catch (err) {
+      console.error("error deleting task", err);
+    }
+  }
 
   const handleCheck = (itemId) => {
     console.log("Sending update:", {
@@ -79,12 +81,11 @@ function Checklist({ taskId }) {
         return res.json();
       })
       .then((data) => setItems(data))
-      .catch((err) => setError(err.message))
+      .catch((err) => console.error(err.message))
       .finally(() => setLoading(false));
   }, [taskId]);
 
   if (loading) return <p>Loading checklist...</p>;
-  if (error) return <p className="text-danger">Error: {error}</p>;
 
   return (
     <div>
@@ -121,7 +122,7 @@ function Checklist({ taskId }) {
             )}
             <button
               className="btn btn-sm btn-outline-danger ms-auto"
-              onClick={() => handleDelete(item.id)}
+              onClick={() => handleDelete(item)}
               aria-label="Delete checklist item"
             >
               <i className="bi bi-trash"></i>
