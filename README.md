@@ -56,8 +56,11 @@ npm install
 
 ## Some Future Ideas:
 
-- Sorting
-- Reordering tasks/checklist items
+- Sorting tasks in different ways (date, categories)
+- Reordering tasks/checklist items by dragging
 - Light/dark mode toggle
 - User accounts & authentication
 - Offline-first support with localStorage
+- Implement projects (Project > Task > Checklist hierarchy)
+- Sidebar menu to select project or category to view.
+- drag and drop functionality 
