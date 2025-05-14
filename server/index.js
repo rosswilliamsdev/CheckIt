@@ -48,6 +48,90 @@ app.get("/", (req, res) => {
   res.send("Welcome to the CheckIt API!");
 });
 
+/////////////////// PROJECTS API
+
+// GET
+app.get("/projects", (req, res) => {
+  const userId = 1;
+  const sql = `SELECT id, title FROM projects WHERE userId = ? ORDER BY dateCreated DESC`;
+
+  db.all(sql, [userId], (err, rows) => {
+    if (err) {
+      console.error("Error fetching projects:", err.message);
+      res.status(500).json({ error: "Failed to fetch projects" });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+// POST
+app.post("/projects", (req, res) => {
+  const { userId, title, description, dateCreated, dateCompleted } = req.body;
+
+  const sql = `
+    INSERT INTO projects (
+      userId, title, description,
+      dateCreated, dateCompleted
+    ) VALUES (?, ?, ?, ?, ?)
+  `;
+
+  const params = [userId, title, description, dateCreated, dateCompleted];
+
+  db.run(sql, params, function (err) {
+    if (err) {
+      console.error("Error creating project:", err.message);
+      res.status(500).json({ error: "Failed to create project" });
+    } else {
+      res.status(201).json({ id: this.lastID });
+    }
+  });
+});
+
+// PUT
+app.put("/projects/:id", (req, res) => {
+  const { id } = req.params;
+  const { userId, title, description, dateCreated, dateCompleted } = req.body;
+
+  const sql = `
+    UPDATE projects SET
+      userId = ?, title = ?, description = ?,
+      dateCreated = ?, dateCompleted = ?
+    WHERE id = ?
+  `;
+
+  const params = [userId, title, description, dateCreated, dateCompleted, id];
+
+  db.run(sql, params, function (err) {
+    if (err) {
+      console.error("Error updating project:", err.message);
+      res.status(500).json({ error: "Failed to update project" });
+    } else {
+      res
+        .status(200)
+        .json({ message: "Project updated", changes: this.changes });
+    }
+  });
+});
+
+// DELETE
+app.delete("/projects/:id", (req, res) => {
+  const { id } = req.params;
+
+  const sql = `DELETE FROM projects WHERE id = ?`;
+
+  db.run(sql, [id], function (err) {
+    if (err) {
+      console.error("Error deleting project:", err.message);
+      res.status(500).json({ error: "Failed to delete project" });
+    } else if (this.changes === 0) {
+      res.status(404).json({ error: "Project not found" });
+    } else {
+      res.status(200).json({ message: "Project deleted" });
+    }
+  });
+});
+
 /////////////////// TASKS API
 
 //GET
