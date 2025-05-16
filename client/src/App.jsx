@@ -4,10 +4,12 @@ import TaskList from "./components/TaskList";
 import TaskForm from "./components/TaskForm";
 import Header from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
+import ProjectForm from "./components/ProjectForm";
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   // Fetch tasks from the server when the component mounts
   // and whenever the tasks state changes
@@ -25,13 +27,33 @@ function App() {
       .catch((err) => console.error("Error fetching projects:", err));
   }, [projects]);
 
+  function fetchProjects() {
+    fetch("http://localhost:3001/projects")
+      .then((res) => res.json())
+      .then((data) => setProjects(data))
+      .catch((err) => console.error("Error fetching projects:", err));
+  }
+
   return (
     <div className="d-flex">
-      <Sidebar projects={projects} setProjects={setProjects} />
-      <div className="flex-grow-1 p-5">
-        <Header />
+      <Sidebar
+        projects={projects}
+        setProjects={setProjects}
+        fetchProjects={fetchProjects}
+        selectedProjectId={selectedProjectId}
+        setSelectedProjectId={setSelectedProjectId}
+      />
+      <div
+        className="flex-grow-1 mx-3"
+        style={{ width: "35rem" }}
+      >
+        <ProjectForm setProjects={setProjects} />
         <TaskForm setTasks={setTasks} />
-        <TaskList setTasks={setTasks} tasks={tasks} />
+        <TaskList
+          setTasks={setTasks}
+          tasks={tasks}
+          selectedProjectId={selectedProjectId}
+        />
       </div>
     </div>
   );

@@ -1,14 +1,11 @@
 import React, { useState } from "react";
-import { submitTask } from "../api/tasks";
+import { submitProject } from "../api/projects";
 
-function TaskForm({ setTasks }) {
+function ProjectForm({ setProjects }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    priority: "medium",
-    dueDate: "",
-    status: "pending",
     userId: 1,
     dateCreated: new Date().toISOString().split("T")[0],
   });
@@ -21,18 +18,14 @@ function TaskForm({ setTasks }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newTask = await submitTask(formData);
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    const newProject = await submitProject(formData);
+    setProjects((prevProjects) => [...prevProjects, newProject]);
     setFormData({
       title: "",
       description: "",
-      priority: "medium",
-      dueDate: "",
-      status: "pending",
       userId: 1, // a static userId for simplicity, replace with actual user ID logic
       dateCreated: new Date().toISOString().split("T")[0],
     });
-    setIsExpanded(false);
   };
 
   return (
@@ -47,7 +40,7 @@ function TaskForm({ setTasks }) {
             isExpanded ? "bi-caret-down-fill" : "bi-caret-right-fill"
           }`}
         ></i>
-        Create A New Task
+        Create A New Project
       </h2>
       {isExpanded && (
         <form onSubmit={handleSubmit} className="m-4 d-flex flex-column">
@@ -73,35 +66,8 @@ function TaskForm({ setTasks }) {
               onChange={handleChange}
             />
           </div>
-          <div className="mb-3 d-flex flex-column">
-            <label className="form-label align-self-start fw-bold">
-              Priority
-            </label>
-            <select
-              className="form-select"
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          <div className="mb-3 d-flex flex-column">
-            <label className="form-label align-self-start fw-bold">
-              Due Date
-            </label>
-            <input
-              type="date"
-              className="form-control"
-              name="dueDate"
-              value={formData.dueDate}
-              onChange={handleChange}
-            />
-          </div>
           <button type="submit" className="btn btn-primary mt-3 mb-3">
-            Add Task
+            Add Project
           </button>
         </form>
       )}
@@ -109,4 +75,4 @@ function TaskForm({ setTasks }) {
   );
 }
 
-export default TaskForm;
+export default ProjectForm;
