@@ -2,8 +2,8 @@ import Header from "./Header";
 
 function Sidebar({
   projects,
-  setProjects,
-  fetchProjects,
+  // setProjects,
+  // fetchProjects,
   selectedProjectId,
   setSelectedProjectId,
 }) {

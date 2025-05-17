@@ -27,28 +27,25 @@ function App() {
       .catch((err) => console.error("Error fetching projects:", err));
   }, [projects]);
 
-  function fetchProjects() {
-    fetch("http://localhost:3001/projects")
-      .then((res) => res.json())
-      .then((data) => setProjects(data))
-      .catch((err) => console.error("Error fetching projects:", err));
-  }
+  // function fetchProjects() {
+  //   fetch("http://localhost:3001/projects")
+  //     .then((res) => res.json())
+  //     .then((data) => setProjects(data))
+  //     .catch((err) => console.error("Error fetching projects:", err));
+  // }
 
   return (
     <div className="d-flex">
       <Sidebar
         projects={projects}
         setProjects={setProjects}
-        fetchProjects={fetchProjects}
+        // fetchProjects={fetchProjects}
         selectedProjectId={selectedProjectId}
         setSelectedProjectId={setSelectedProjectId}
       />
-      <div
-        className="flex-grow-1 mx-3"
-        style={{ width: "35rem" }}
-      >
+      <div className="flex-grow-1 mx-3" style={{ width: "35rem" }}>
         <ProjectForm setProjects={setProjects} />
-        <TaskForm setTasks={setTasks} />
+        <TaskForm setTasks={setTasks} selectedProjectId={selectedProjectId} />
         <TaskList
           setTasks={setTasks}
           tasks={tasks}
