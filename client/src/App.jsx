@@ -10,6 +10,7 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Fetch tasks from the server when the component mounts
   // and whenever the tasks state changes
@@ -35,22 +36,26 @@ function App() {
   // }
 
   return (
-    <div className="d-flex">
-      <Sidebar
-        projects={projects}
-        setProjects={setProjects}
-        // fetchProjects={fetchProjects}
-        selectedProjectId={selectedProjectId}
-        setSelectedProjectId={setSelectedProjectId}
-      />
-      <div className="flex-grow-1 mx-3" style={{ width: "35rem" }}>
-        <ProjectForm setProjects={setProjects} />
-        <TaskForm setTasks={setTasks} selectedProjectId={selectedProjectId} />
-        <TaskList
-          setTasks={setTasks}
-          tasks={tasks}
+    <div className={`${darkMode ? "dark-mode" : ""}`}>
+      <div className="d-flex" style={{ minHeight: "100vh", width: "100vw" }}>
+        <Sidebar
+          projects={projects}
+          setProjects={setProjects}
+          // fetchProjects={fetchProjects}
           selectedProjectId={selectedProjectId}
+          setSelectedProjectId={setSelectedProjectId}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
         />
+        <div className="flex-grow-1 mx-3" style={{ width: "35rem" }}>
+          <ProjectForm setProjects={setProjects} />
+          <TaskForm setTasks={setTasks} selectedProjectId={selectedProjectId} />
+          <TaskList
+            setTasks={setTasks}
+            tasks={tasks}
+            selectedProjectId={selectedProjectId}
+          />
+        </div>
       </div>
     </div>
   );

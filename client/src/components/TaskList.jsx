@@ -25,7 +25,10 @@ function TaskList({ tasks, setTasks, selectedProjectId }) {
         <h5 className="mb-3 font-monospace">Select a Project to View Tasks</h5>
       ) : (
         <>
-          <h2 className="mb-3 font-monospace">Your Tasks</h2>
+          <div className="d-flex justify-content-center">
+            <h2 className="mb-3 font-monospace text-decoration-underline">Your Tasks</h2>
+          </div>
+
           {filteredTasks.length === 0 ? (
             <p className="mb-0 mt-2">No tasks found.</p>
           ) : (

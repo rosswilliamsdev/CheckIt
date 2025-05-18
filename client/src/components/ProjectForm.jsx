@@ -54,6 +54,7 @@ function ProjectForm({ setProjects }) {
               value={formData.title}
               onChange={handleChange}
               required
+              maxLength={19}
             />
           </div>
           <div className="mb-3 d-flex flex-column">
