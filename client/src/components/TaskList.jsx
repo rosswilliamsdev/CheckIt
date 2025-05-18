@@ -17,16 +17,19 @@ function TaskList({ tasks, setTasks, selectedProjectId }) {
   };
 
   return (
-    <div className="container bg-light-subtle rounded-4 p-4">
+    <div
+      className="container bg-light-subtle rounded-4 p-4"
+      style={{ minHeight: "40rem" }}
+    >
       {selectedProjectId === null ? (
         <h5 className="mb-3 font-monospace">Select a Project to View Tasks</h5>
       ) : (
         <>
           <h2 className="mb-3 font-monospace">Your Tasks</h2>
           {filteredTasks.length === 0 ? (
-            <p>No tasks found.</p>
+            <p className="mb-0 mt-2">No tasks found.</p>
           ) : (
-            <ul className="container list-group">
+            <ul className="container list-group mb-0 mt-2">
               {filteredTasks.map((task) => (
                 <TaskItem
                   key={task.id}

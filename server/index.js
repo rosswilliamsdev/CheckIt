@@ -194,21 +194,21 @@ app.put("/projects/:id", (req, res) => {
 });
 
 // DELETE
-app.delete("/projects/:id", (req, res) => {
-  const { id } = req.params;
+app.delete("/projects/:id", async (req, res) => {
+  const projectId = req.params.id;
 
-  const sql = `DELETE FROM projects WHERE id = ?`;
+  try {
+    // First delete tasks belonging to this project
+    await db.run("DELETE FROM tasks WHERE projectId = ?", [projectId]);
 
-  db.run(sql, [id], function (err) {
-    if (err) {
-      console.error("Error deleting project:", err.message);
-      res.status(500).json({ error: "Failed to delete project" });
-    } else if (this.changes === 0) {
-      res.status(404).json({ error: "Project not found" });
-    } else {
-      res.status(200).json({ message: "Project deleted" });
-    }
-  });
+    // Then delete the project
+    await db.run("DELETE FROM projects WHERE id = ?", [projectId]);
+
+    res.sendStatus(204);
+  } catch (err) {
+    console.error("Error deleting project and tasks:", err);
+    res.status(500).json({ error: "Failed to delete project and tasks" });
+  }
 });
 
 /////////////////// TASKS API

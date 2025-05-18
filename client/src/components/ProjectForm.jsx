@@ -26,10 +26,11 @@ function ProjectForm({ setProjects }) {
       userId: 1, // a static userId for simplicity, replace with actual user ID logic
       dateCreated: new Date().toISOString().split("T")[0],
     });
+    setIsExpanded(false);
   };
 
   return (
-    <div className="container bg-light-subtle  p-3 rounded-4 my-4">
+    <div className="container bg-light-subtle  p-3 rounded-4 mb-4">
       <h2
         className="font-monospace d-flex align-items-center justify-content-center"
         onClick={() => setIsExpanded((prev) => !prev)}
