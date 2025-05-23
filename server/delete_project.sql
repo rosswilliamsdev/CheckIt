@@ -1,1 +1,0 @@
-DELETE FROM projects WHERE title LIKE '%rhdgzbvtysjfhgntyujsfngcwjrysfgnzcjw56ryafgnzcv%';
