@@ -23,18 +23,23 @@ CheckIt is a full-stack todo list app with support for subtasks, automatic progr
   - Bootstrap icons & styles
   - Expand/collapse checklist views
   - Status badges with color-coded styling
+- **User Authentication**
+  - JWT-based login and signup
+  - Protected routes for user-specific data
+  - Secure task/project ownership scoped to logged-in users
 - **Modular Architecture**
-  - API helpers separated by domain (`/api/checklist.js`, `/api/tasks.js`)
+  - Modular API helpers and route protection using `authFetch` and middleware
+
 ---
 
 ## 🧱 Tech Stack
 
-| Layer    | Tech           |
-|----------|----------------|
-| Frontend | React + Vite   |
-| Styling  | Bootstrap 5    |
-| Backend  | Express        |
-| DB       | SQLite         |
+| Layer    | Tech         |
+| -------- | ------------ |
+| Frontend | React + Vite |
+| Styling  | Bootstrap 5  |
+| Backend  | Express      |
+| DB       | SQLite       |
 
 ---
 
@@ -58,9 +63,6 @@ npm install
 
 - Sorting tasks in different ways (date, categories)
 - Reordering tasks/checklist items by dragging
-- Light/dark mode toggle
-- User accounts & authentication
+- Light/dark mode toggle (basic version implemented)
 - Offline-first support with localStorage
-- Implement projects (Project > Task > Checklist hierarchy)
-- Sidebar menu to select project or category to view.
-- drag and drop functionality 
+- drag and drop functionality
