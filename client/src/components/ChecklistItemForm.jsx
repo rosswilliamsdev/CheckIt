@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createChecklistItem } from "../api/checklist";
 
-function ChecklistItemForm({ taskId, onAdd }) {
+function ChecklistItemForm({ taskId, refetchChecklist }) {
   const [content, setContent] = useState("");
 
   const handleSubmit = (e) => {
@@ -9,8 +9,8 @@ function ChecklistItemForm({ taskId, onAdd }) {
     if (!content.trim()) return;
 
     createChecklistItem(taskId, content)
-      .then((newItem) => {
-        onAdd(newItem);
+      .then(() => {
+        refetchChecklist();
         setContent("");
       })
       .catch((err) => console.error(err));

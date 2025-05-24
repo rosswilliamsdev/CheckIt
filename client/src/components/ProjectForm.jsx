@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { submitProject } from "../api/projects";
 
-function ProjectForm({ setProjects }) {
+function ProjectForm({ refetchProjects }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    userId: 1,
     dateCreated: new Date().toISOString().split("T")[0],
   });
 
@@ -17,16 +16,14 @@ function ProjectForm({ setProjects }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const newProject = await submitProject(formData);
-    setProjects((prevProjects) => [...prevProjects, newProject]);
+    await submitProject(formData);
     setFormData({
       title: "",
       description: "",
-      userId: 1, // a static userId for simplicity, replace with actual user ID logic
       dateCreated: new Date().toISOString().split("T")[0],
     });
     setIsExpanded(false);
+    refetchProjects();
   };
 
   return (

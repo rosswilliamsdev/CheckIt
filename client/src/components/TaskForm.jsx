@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { submitTask } from "../api/tasks";
 
-function TaskForm({ setTasks, selectedProjectId }) {
+function TaskForm({ selectedProjectId, refetchTasks }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -9,7 +9,6 @@ function TaskForm({ setTasks, selectedProjectId }) {
     priority: "medium",
     dueDate: "",
     status: "pending",
-    userId: 1,
     dateCreated: new Date().toISOString().split("T")[0],
   });
 
@@ -25,14 +24,13 @@ function TaskForm({ setTasks, selectedProjectId }) {
       ...formData,
       projectId: selectedProjectId,
     });
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    refetchTasks();
     setFormData({
       title: "",
       description: "",
       priority: "medium",
       dueDate: "",
       status: "pending",
-      userId: 1, // a static userId for simplicity, replace with actual user ID logic
       dateCreated: new Date().toISOString().split("T")[0],
     });
     setIsExpanded(false);

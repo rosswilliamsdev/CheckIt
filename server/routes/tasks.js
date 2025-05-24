@@ -1,25 +1,31 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db")
+const db = require("../db");
+const authenticateToken = require("../middleware/auth");
+
+router.use(authenticateToken);
 
 //GET
 router.get("/tasks", (req, res) => {
+  console.log("GET tasks called");
   const sql = `
-    SELECT 
-      tasks.*, 
-      projects.title AS projectTitle,
-      (SELECT COUNT(*) FROM checklist_items WHERE taskId = tasks.id AND isDone = 1) AS completedSubtasks,
-      (SELECT COUNT(*) FROM checklist_items WHERE taskId = tasks.id) AS totalSubtasks
-    FROM tasks
-    LEFT JOIN projects ON tasks.projectId = projects.id
-    ORDER BY dateCreated DESC
-  `;
+  SELECT 
+    tasks.*, 
+    projects.title AS projectTitle,
+    (SELECT COUNT(*) FROM checklist_items WHERE taskId = tasks.id AND isDone = 1) AS completedSubtasks,
+    (SELECT COUNT(*) FROM checklist_items WHERE taskId = tasks.id) AS totalSubtasks
+  FROM tasks
+  LEFT JOIN projects ON tasks.projectId = projects.id
+  WHERE tasks.userId = ?
+  ORDER BY dateCreated DESC
+`;
 
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [req.user.userId], (err, rows) => {
     if (err) {
       console.error("Error fetching tasks:", err.message);
       res.status(500).json({ error: "Failed to fetch tasks" });
     } else {
+      console.log("tasks have been fetched by user: ", req.user);
       res.json(rows);
     }
   });
@@ -27,7 +33,6 @@ router.get("/tasks", (req, res) => {
 //POST
 router.post("/tasks", (req, res) => {
   const {
-    userId,
     projectId,
     title,
     description,
@@ -39,6 +44,7 @@ router.post("/tasks", (req, res) => {
     repeat,
     dateCreated,
   } = req.body;
+  const userId = req.user.userId;
 
   const sql = `
     INSERT INTO tasks (
@@ -74,7 +80,6 @@ router.post("/tasks", (req, res) => {
 router.put("/tasks/:id", (req, res) => {
   const { id } = req.params;
   const {
-    userId,
     projectId,
     title,
     description,
@@ -87,16 +92,16 @@ router.put("/tasks/:id", (req, res) => {
     dateCreated,
     dateCompleted,
   } = req.body;
+  const userId = req.user.userId;
 
   const sql = `
     UPDATE tasks SET
-      userId = ?, projectId = ?, title = ?, description = ?, status = ?, priority = ?,
+      projectId = ?, title = ?, description = ?, status = ?, priority = ?,
       category = ?, dueDate = ?, reminderDate = ?, repeat = ?, dateCreated = ?, dateCompleted = ?
-    WHERE id = ?
+    WHERE id = ? AND userId = ?
   `;
 
   const params = [
-    userId,
     projectId,
     title,
     description,
@@ -109,6 +114,7 @@ router.put("/tasks/:id", (req, res) => {
     dateCreated,
     dateCompleted,
     id,
+    userId,
   ];
 
   db.run(sql, params, function (err) {
@@ -124,9 +130,9 @@ router.put("/tasks/:id", (req, res) => {
 router.delete("/tasks/:id", (req, res) => {
   const { id } = req.params;
 
-  const sql = `DELETE FROM tasks WHERE id = ?`;
+  const sql = `DELETE FROM tasks WHERE id = ? AND userId = ?`;
 
-  db.run(sql, [id], function (err) {
+  db.run(sql, [id, req.user.userId], function (err) {
     if (err) {
       console.error("Error deleting task:", err.message);
       res.status(500).json({ error: "Failed to delete task" });

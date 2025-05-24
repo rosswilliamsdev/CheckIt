@@ -5,6 +5,7 @@ import {
   toggleChecklistItem,
   updateChecklistContent,
 } from "../api/checklist";
+import { authFetch } from "../api/api";
 
 function Checklist({ taskId, onStatusChange }) {
   const [items, setItems] = useState([]);
@@ -12,14 +13,10 @@ function Checklist({ taskId, onStatusChange }) {
   const [editingId, setEditingId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
 
-  function onDelete(checklistItem) {
-    setItems((prev) => prev.filter((c) => c.id !== checklistItem.id));
-  }
-
   async function handleDelete(checklistItem) {
     try {
       await deleteChecklistItem(checklistItem.id);
-      onDelete(checklistItem);
+      refetchChecklist();
     } catch (err) {
       console.error("error deleting task", err);
     }
@@ -30,12 +27,8 @@ function Checklist({ taskId, onStatusChange }) {
     if (!item) return;
 
     try {
-      const updatedItem = await toggleChecklistItem(item);
-      setItems((prev) =>
-        prev.map((i) =>
-          i.id === itemId ? { ...i, isDone: updatedItem.isDone } : i
-        )
-      );
+      await toggleChecklistItem(item);
+      refetchChecklist();
     } catch (err) {
       console.error("Error toggling checklist item:", err);
     }
@@ -48,21 +41,18 @@ function Checklist({ taskId, onStatusChange }) {
 
   const handleEditSubmit = async (id) => {
     try {
-      const updatedItem = await updateChecklistContent(id, editedContent);
-      setItems((prev) =>
-        prev.map((i) =>
-          i.id === id ? { ...i, content: updatedItem.content } : i
-        )
-      );
+      await updateChecklistContent(id, editedContent);
       setEditingId(null);
       setEditedContent("");
+      refetchChecklist();
     } catch (err) {
       console.error("Failed to update checklist item", err);
     }
   };
 
-  useEffect(() => {
-    fetch(`http://localhost:3001/tasks/${taskId}/checklist`)
+  const refetchChecklist = () => {
+    setLoading(true);
+    authFetch(`/tasks/${taskId}/checklist`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch checklist");
         return res.json();
@@ -70,6 +60,10 @@ function Checklist({ taskId, onStatusChange }) {
       .then((data) => setItems(data))
       .catch((err) => console.error(err.message))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    refetchChecklist();
   }, [taskId]);
 
   useEffect(() => {
@@ -133,10 +127,7 @@ function Checklist({ taskId, onStatusChange }) {
           </li>
         ))}
       </ul>
-      <ChecklistItemForm
-        taskId={taskId}
-        onAdd={(newItem) => setItems((prev) => [...prev, newItem])}
-      />
+      <ChecklistItemForm taskId={taskId} refetchChecklist={refetchChecklist} />
     </div>
   );
 }

@@ -66,3 +66,39 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+#root.dark-mode,
+.dark-mode {
+  background-color: #121212 !important;
+  color: #f1f1f1 !important;
+}
+
+.dark-mode * {
+  background-color: transparent !important;
+  color: #f1f1f1 !important;
+}
+
+.dark-mode .bg-light,
+.dark-mode .bg-light-subtle,
+.dark-mode .bg-white {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .btn {
+  background-color: #333 !important;
+  color: #fff !important;
+}
+
+.dark-mode .list-group-item {
+  background-color: #2a2a2a !important;
+  border-color: #444 !important;
+  color: #fff !important;
+}
+
+body, #root {
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+}

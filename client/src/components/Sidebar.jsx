@@ -4,19 +4,23 @@ import { deleteProject } from "../api/projects";
 
 function Sidebar({
   projects,
-  setProjects,
-  // fetchProjects,
   selectedProjectId,
   setSelectedProjectId,
   darkMode,
   setDarkMode,
+  logout,
+  navigate,
+  refetchProjects,
 }) {
   const [manageMode, setManageMode] = useState(false);
 
-  const handleDeleteProject = (id) => {
-    setProjects(projects.filter((project) => project.id !== id));
-    deleteProject(id);
-    console.log("Delete project:", id);
+  const handleDeleteProject = async (id) => {
+    try {
+      await deleteProject(id);
+      refetchProjects();
+    } catch (err) {
+      console.error("Failed to delete project:", err);
+    }
   };
 
   console.log("Sidebar rendering projects:", projects);
@@ -64,6 +68,15 @@ function Sidebar({
           </li>
         ))}
       </ul>
+      <button
+        className="btn btn-outline-danger btn-sm mt-4 font-monospace"
+        onClick={() => {
+          logout();
+          navigate("/login");
+        }}
+      >
+        Log Out
+      </button>
     </div>
   );
 }

@@ -1,5 +1,7 @@
+import { authFetch } from "./api";
+
 async function submitTask(formData) {
-  const response = await fetch("http://localhost:3001/tasks", {
+  const response = await authFetch("http://localhost:3001/tasks", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -14,7 +16,7 @@ async function submitTask(formData) {
 }
 
 async function deleteTask(taskId) {
-  const response = await fetch(`http://localhost:3001/tasks/${taskId}`, {
+  const response = await authFetch(`http://localhost:3001/tasks/${taskId}`, {
     method: "DELETE",
   });
 
@@ -24,7 +26,7 @@ async function deleteTask(taskId) {
 }
 
 async function updateTaskStatus(id, status) {
-  const res = await fetch(`http://localhost:3001/tasks/${id}/status`, {
+  const res = await authFetch(`http://localhost:3001/tasks/${id}/status`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status }),

@@ -6,23 +6,3 @@
 } */
 
 /* App.css */
-.dark-mode {
-  background-color: #121212;
-  color: #f1f1f1;
-}
-
-.dark-mode .bg-light-subtle {
-  background-color: #1e1e1e !important;
-  color: #fff;
-}
-
-.dark-mode .list-group-item {
-  background-color: #2a2a2a;
-  border-color: #444;
-  color: #fff;
-}
-
-.dark-mode .btn-outline-secondary {
-  color: #ccc;
-  border-color: #666;
-}

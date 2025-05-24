@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import TaskItem from "./TaskItem";
+import { deleteTask } from "../api/tasks";
 
-function TaskList({ tasks, setTasks, selectedProjectId }) {
+function TaskList({ tasks, refetchTasks, selectedProjectId }) {
   const [expandedTaskId, setExpandedTaskId] = useState(null);
 
   const filteredTasks = selectedProjectId
@@ -9,7 +10,9 @@ function TaskList({ tasks, setTasks, selectedProjectId }) {
     : tasks;
 
   function onDelete(task) {
-    setTasks((prev) => prev.filter((t) => t.id !== task.id));
+    deleteTask(task.id)
+      .then(refetchTasks())
+      .catch((err) => console.error(err));
   }
 
   const toggleExpanded = (id) => {
@@ -26,7 +29,9 @@ function TaskList({ tasks, setTasks, selectedProjectId }) {
       ) : (
         <>
           <div className="d-flex justify-content-center">
-            <h2 className="mb-3 font-monospace text-decoration-underline">Your Tasks</h2>
+            <h2 className="mb-3 font-monospace text-decoration-underline">
+              Your Tasks
+            </h2>
           </div>
 
           {filteredTasks.length === 0 ? (
@@ -37,7 +42,7 @@ function TaskList({ tasks, setTasks, selectedProjectId }) {
                 <TaskItem
                   key={task.id}
                   task={task}
-                  onDelete={() => onDelete(task)}
+                  onDelete={() => onDelete(task.id)}
                   isExpanded={expandedTaskId === task.id}
                   onToggleExpand={() => toggleExpanded(task.id)}
                 />

@@ -3,20 +3,42 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../db");
 require("dotenv").config();
+const authenticateToken = require("../middleware/auth");
 
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await db.run(
-      "INSERT INTO users (email, passwordHash) VALUES (?, ?)",
-      [email, hashedPassword]
-    );
+    db.run(
+      "INSERT INTO users (email, name, passwordHash) VALUES (?, ?, ?)",
+      [email, "", hashedPassword],
+      function (err) {
+        if (err) {
+          if (err.message.includes("UNIQUE constraint failed: users.email")) {
+            return res.status(409).json({ error: "Email already in use" });
+          }
+          console.error(err);
+          return res.status(500).json({ error: "Signup failed" });
+        }
 
-    res.status(201).json({ message: "User created successfully" });
+        const token = jwt.sign(
+          { userId: this.lastID },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "1d",
+          }
+        );
+
+        res.status(201).json({ message: "User created", token });
+      }
+    );
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Signup failed" });
@@ -25,9 +47,23 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
   try {
-    const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    const user = await new Promise((resolve, reject) => {
+      db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+        if (err) return reject(err);
+        resolve(row);
+      });
+    });
+
+    if (!user || !user.passwordHash) {
+      console.error("User not found or missing passwordHash:", user);
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
@@ -40,6 +76,27 @@ router.post("/login", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Login failed" });
   }
+});
+
+router.get("/me", authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+
+  db.get(
+    "SELECT id, email, name FROM users WHERE id = ?",
+    [userId],
+    (err, user) => {
+      if (err) {
+        console.error("Error fetching user:", err.message);
+        return res.status(500).json({ error: "Failed to fetch user info" });
+      }
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      res.json(user);
+    }
+  );
 });
 
 module.exports = router;

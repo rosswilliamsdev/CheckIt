@@ -1,63 +1,18 @@
-import { useState, useEffect } from "react";
-import "./App.css";
-import TaskList from "./components/TaskList";
-import TaskForm from "./components/TaskForm";
-import Header from "./components/Header";
-import { Sidebar } from "./components/Sidebar";
-import ProjectForm from "./components/ProjectForm";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import Home from "./pages/Home";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
-
-  // Fetch tasks from the server when the component mounts
-  // and whenever the tasks state changes
-  useEffect(() => {
-    fetch("http://localhost:3001/tasks")
-      .then((res) => res.json())
-      .then((data) => setTasks(data))
-      .catch((err) => console.error("Error fetching tasks:", err));
-  }, [tasks]);
-
-  useEffect(() => {
-    fetch("http://localhost:3001/projects")
-      .then((res) => res.json())
-      .then((data) => setProjects(data))
-      .catch((err) => console.error("Error fetching projects:", err));
-  }, [projects]);
-
-  // function fetchProjects() {
-  //   fetch("http://localhost:3001/projects")
-  //     .then((res) => res.json())
-  //     .then((data) => setProjects(data))
-  //     .catch((err) => console.error("Error fetching projects:", err));
-  // }
-
   return (
-    <div className={`${darkMode ? "dark-mode" : ""}`}>
-      <div className="d-flex" style={{ minHeight: "100vh", width: "100vw" }}>
-        <Sidebar
-          projects={projects}
-          setProjects={setProjects}
-          // fetchProjects={fetchProjects}
-          selectedProjectId={selectedProjectId}
-          setSelectedProjectId={setSelectedProjectId}
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-        />
-        <div className="flex-grow-1 mx-3" style={{ width: "35rem" }}>
-          <ProjectForm setProjects={setProjects} />
-          <TaskForm setTasks={setTasks} selectedProjectId={selectedProjectId} />
-          <TaskList
-            setTasks={setTasks}
-            tasks={tasks}
-            selectedProjectId={selectedProjectId}
-          />
-        </div>
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+      </Routes>
+    </Router>
   );
 }
 

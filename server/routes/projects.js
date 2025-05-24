@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
+const authenticateToken = require("../middleware/auth");
+
+router.use(authenticateToken);
 
 // GET
 router.get("/projects", (req, res) => {
-  const userId = 1;
+  const userId = req.user.userId;
   const sql = `SELECT id, title FROM projects WHERE userId = ? ORDER BY dateCreated DESC`;
 
   db.all(sql, [userId], (err, rows) => {
@@ -19,7 +22,8 @@ router.get("/projects", (req, res) => {
 
 // POST
 router.post("/projects", (req, res) => {
-  const { userId, title, description, dateCreated, dateCompleted } = req.body;
+  const { title, description, dateCreated, dateCompleted } = req.body;
+  const userId = req.user.userId;
 
   const sql = `
     INSERT INTO projects (
@@ -43,7 +47,8 @@ router.post("/projects", (req, res) => {
 // PUT
 router.put("/projects/:id", (req, res) => {
   const { id } = req.params;
-  const { userId, title, description, dateCreated, dateCompleted } = req.body;
+  const { title, description, dateCreated, dateCompleted } = req.body;
+  const userId = req.user.userId;
 
   const sql = `
     UPDATE projects SET
@@ -74,8 +79,8 @@ router.delete("/projects/:id", async (req, res) => {
     // First delete tasks belonging to this project
     await db.run("DELETE FROM tasks WHERE projectId = ?", [projectId]);
 
-    // Then delete the project
-    await db.run("DELETE FROM projects WHERE id = ?", [projectId]);
+    // Then delete the project only if it belongs to the authenticated user
+    await db.run("DELETE FROM projects WHERE id = ? AND userId = ?", [projectId, req.user.userId]);
 
     res.sendStatus(204);
   } catch (err) {

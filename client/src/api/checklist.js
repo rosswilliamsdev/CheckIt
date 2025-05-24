@@ -1,15 +1,20 @@
+import { authFetch } from "./api";
+
 async function createChecklistItem(taskId, content) {
-  const res = await fetch(`http://localhost:3001/tasks/${taskId}/checklist`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ content, isDone: 0 }),
-  });
+  const res = await authFetch(
+    `http://localhost:3001/tasks/${taskId}/checklist`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content, isDone: 0 }),
+    }
+  );
   if (!res.ok) throw new Error("Failed to add checklist item");
   return await res.json();
 }
 
 async function deleteChecklistItem(id) {
-  fetch(`http://localhost:3001/checklist/${id}`, {
+  authFetch(`http://localhost:3001/checklist/${id}`, {
     method: "DELETE",
   }).then((res) => {
     if (!res.ok) throw new Error("Failed to delete checklist item");
@@ -21,7 +26,7 @@ async function deleteChecklistItem(id) {
 async function toggleChecklistItem(item) {
   const updatedIsDone = item.isDone ? 0 : 1;
 
-  const res = await fetch(`http://localhost:3001/checklist/${item.id}`, {
+  const res = await authFetch(`http://localhost:3001/checklist/${item.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ isDone: updatedIsDone, content: item.content }),
@@ -35,7 +40,7 @@ async function toggleChecklistItem(item) {
 }
 
 async function updateChecklistContent(id, content) {
-  const res = await fetch(`http://localhost:3001/checklist/${id}`, {
+  const res = await authFetch(`http://localhost:3001/checklist/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content }),
