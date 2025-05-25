@@ -12,9 +12,9 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
-app.use("/", projectsRoutes);
+app.use("/projects", projectsRoutes);
 app.use("/", checklistRoutes);
-app.use("/", tasksRoutes);
+app.use("/tasks", tasksRoutes);
 
 db.serialize(() => {
   // Create tables if they don't exist

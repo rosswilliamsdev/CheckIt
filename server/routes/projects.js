@@ -5,8 +5,22 @@ const authenticateToken = require("../middleware/auth");
 
 router.use(authenticateToken);
 
+//helper
+const getProjectById = (id, userId) => {
+  return new Promise((resolve, reject) => {
+    db.get(
+      "SELECT * FROM projects WHERE id = ? AND userId = ?",
+      [id, userId],
+      (err, row) => {
+        if (err) return reject(err);
+        resolve(row);
+      }
+    );
+  });
+};
+
 // GET
-router.get("/projects", (req, res) => {
+router.get("/", (req, res) => {
   const userId = req.user.userId;
   const sql = `SELECT id, title FROM projects WHERE userId = ? ORDER BY dateCreated DESC`;
 
@@ -20,8 +34,24 @@ router.get("/projects", (req, res) => {
   });
 });
 
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+  try {
+    const project = await getProjectById(id, userId);
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+    console.log("Project from db:", project);
+    res.json(project);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // POST
-router.post("/projects", (req, res) => {
+router.post("/", (req, res) => {
   const { title, description, dateCreated, dateCompleted } = req.body;
   const userId = req.user.userId;
 
@@ -45,7 +75,7 @@ router.post("/projects", (req, res) => {
 });
 
 // PUT
-router.put("/projects/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { title, description, dateCreated, dateCompleted } = req.body;
   const userId = req.user.userId;
@@ -72,7 +102,7 @@ router.put("/projects/:id", (req, res) => {
 });
 
 // DELETE
-router.delete("/projects/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const projectId = req.params.id;
 
   try {
@@ -80,7 +110,10 @@ router.delete("/projects/:id", async (req, res) => {
     await db.run("DELETE FROM tasks WHERE projectId = ?", [projectId]);
 
     // Then delete the project only if it belongs to the authenticated user
-    await db.run("DELETE FROM projects WHERE id = ? AND userId = ?", [projectId, req.user.userId]);
+    await db.run("DELETE FROM projects WHERE id = ? AND userId = ?", [
+      projectId,
+      req.user.userId,
+    ]);
 
     res.sendStatus(204);
   } catch (err) {

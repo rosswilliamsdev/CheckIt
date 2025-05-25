@@ -8,6 +8,7 @@ import { authFetch } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 
 import { useNavigate } from "react-router-dom";
+import ProjectInfo from "../components/ProjectInfo";
 
 export default function Home() {
   const { user, loading, logout } = useAuth();
@@ -66,8 +67,16 @@ useEffect(() => {
         refetchProjects={refetchProjects}
       />
       <div className="flex-grow-1 mx-3" style={{ width: "35rem" }}>
-        <ProjectForm setProjects={setProjects} refetchProjects={refetchProjects} />
-        <TaskForm setTasks={setTasks} selectedProjectId={selectedProjectId} refetchTasks={refetchTasks} />
+        <ProjectForm
+          setProjects={setProjects}
+          refetchProjects={refetchProjects}
+        />
+        <TaskForm
+          setTasks={setTasks}
+          selectedProjectId={selectedProjectId}
+          refetchTasks={refetchTasks}
+        />
+        <ProjectInfo selectedProjectId={selectedProjectId} />
         <TaskList
           setTasks={setTasks}
           tasks={tasks}

@@ -15,6 +15,23 @@ async function submitProject(formData) {
   return newProject;
 }
 
+async function getProject(projectId) {
+  const response = await authFetch(
+    `http://localhost:3001/projects/${projectId}`,
+    {
+      method: "GET",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to retrieve project");
+  }
+
+  const project = await response.json();
+  console.log("Here's the json from getProject:", project);
+  return project;
+}
+
 async function deleteProject(projectId) {
   const response = await authFetch(
     `http://localhost:3001/projects/${projectId}`,
@@ -30,4 +47,4 @@ async function deleteProject(projectId) {
 
 // probably need an updateProject api call for editing what tasks are in a project
 
-export { submitProject, deleteProject };
+export { submitProject, deleteProject, getProject };

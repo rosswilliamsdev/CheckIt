@@ -6,7 +6,7 @@ const authenticateToken = require("../middleware/auth");
 router.use(authenticateToken);
 
 //GET
-router.get("/tasks", (req, res) => {
+router.get("/", (req, res) => {
   console.log("GET tasks called");
   const sql = `
   SELECT 
@@ -31,7 +31,7 @@ router.get("/tasks", (req, res) => {
   });
 });
 //POST
-router.post("/tasks", (req, res) => {
+router.post("/", (req, res) => {
   const {
     projectId,
     title,
@@ -77,7 +77,7 @@ router.post("/tasks", (req, res) => {
   });
 });
 //PUT
-router.put("/tasks/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const {
     projectId,
@@ -127,7 +127,7 @@ router.put("/tasks/:id", (req, res) => {
   });
 });
 //DELETE
-router.delete("/tasks/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
   const sql = `DELETE FROM tasks WHERE id = ? AND userId = ?`;

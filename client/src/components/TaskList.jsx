@@ -35,7 +35,9 @@ function TaskList({ tasks, refetchTasks, selectedProjectId }) {
           </div>
 
           {filteredTasks.length === 0 ? (
-            <p className="mb-0 mt-2">No tasks found.</p>
+            <p className="mb-0 mt-2 d-flex justify-content-center">
+              No tasks found.
+            </p>
           ) : (
             <ul className="container list-group mb-0 mt-2">
               {filteredTasks.map((task) => (
