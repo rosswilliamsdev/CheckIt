@@ -16,21 +16,22 @@ export default function Home() {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
+  const [projectRefreshTrigger, setProjectRefreshTrigger] = useState(0);
   const navigate = useNavigate();
 
-useEffect(() => {
-  authFetch("/tasks")
-    .then((res) => res.json())
-    .then((data) => setTasks(data))
-    .catch((err) => console.error("Error fetching tasks:", err));
-}, []);
+  useEffect(() => {
+    authFetch("/tasks")
+      .then((res) => res.json())
+      .then((data) => setTasks(data))
+      .catch((err) => console.error("Error fetching tasks:", err));
+  }, []);
 
-useEffect(() => {
-  authFetch("/projects")
-    .then((res) => res.json())
-    .then((data) => setProjects(data))
-    .catch((err) => console.error("Error fetching projects:", err));
-}, []);
+  useEffect(() => {
+    authFetch("/projects")
+      .then((res) => res.json())
+      .then((data) => setProjects(data))
+      .catch((err) => console.error("Error fetching projects:", err));
+  }, []);
 
   useEffect(() => {
     document.body.classList.toggle("dark-mode", darkMode);
@@ -40,7 +41,10 @@ useEffect(() => {
   const refetchTasks = () => {
     authFetch("/tasks")
       .then((res) => res.json())
-      .then((data) => setTasks(data))
+      .then((data) => {
+        setTasks(data);
+        setProjectRefreshTrigger((prev) => prev + 1);
+      })
       .catch((err) => console.error("Error fetching tasks:", err));
   };
 
@@ -76,12 +80,16 @@ useEffect(() => {
           selectedProjectId={selectedProjectId}
           refetchTasks={refetchTasks}
         />
-        <ProjectInfo selectedProjectId={selectedProjectId} />
+        <ProjectInfo
+          selectedProjectId={selectedProjectId}
+          refreshTrigger={projectRefreshTrigger}
+        />
         <TaskList
           setTasks={setTasks}
           tasks={tasks}
           selectedProjectId={selectedProjectId}
           refetchTasks={refetchTasks}
+          onChecklistChange={() => setProjectRefreshTrigger((prev) => prev + 1)}
         />
       </div>
     </div>

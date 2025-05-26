@@ -18,6 +18,7 @@ function Sidebar({
     try {
       await deleteProject(id);
       refetchProjects();
+      setSelectedProjectId(null);
     } catch (err) {
       console.error("Failed to delete project:", err);
     }
@@ -32,10 +33,10 @@ function Sidebar({
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
       <br />
 
-      <div className="w-100 mb-3 d-flex flex-column align-content-center">
-        <h5 className="mb-4 text-center">Active Projects</h5>
+      <div className="w-100 mb-3 d-flex flex-column">
+        <h5 className="mb-4 font-monospace">Active Projects</h5>
         <button
-          className="btn btn-outline-secondary btn-sm w-95 align-self-center fw-bold"
+          className="btn btn-outline-secondary btn-sm w-95 fw-bold"
           style={{ width: "10rem" }}
           onClick={() => setManageMode((prev) => !prev)}
         >
@@ -45,12 +46,12 @@ function Sidebar({
       <ul className="nav nav-pills flex-column">
         {projects.map((project) => (
           <li
-            className="nav-item my-2 p-1 d-flex justify-content-between align-items-center text-center"
+            className="nav-item my-2 d-flex justify-content-between align-items-center text-center"
             key={project.id}
           >
             <a
               href="#"
-              className={`nav-link flex-grow-1 ${
+              className={`nav-link ${
                 selectedProjectId === project.id ? "active" : ""
               }`}
               onClick={() => setSelectedProjectId(project.id)}

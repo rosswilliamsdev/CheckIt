@@ -11,9 +11,59 @@ const getProjectById = (id, userId) => {
     db.get(
       "SELECT * FROM projects WHERE id = ? AND userId = ?",
       [id, userId],
-      (err, row) => {
+      (err, project) => {
         if (err) return reject(err);
-        resolve(row);
+        if (!project) return resolve(null);
+
+        // Fetch tasks for the project
+        db.all(
+          "SELECT * FROM tasks WHERE projectId = ?",
+          [project.id],
+          (err, tasks) => {
+            if (err) return reject(err);
+
+            let remaining = tasks.length;
+            if (remaining === 0) {
+              project.tasks = [];
+              console.log("tasks:", project.tasks);
+              console.log("Final assembled project:", project);
+              return resolve(project);
+            }
+
+            tasks.forEach((task, index) => {
+              console.log("Fetching checklist items for task:", task.id);
+              db.all(
+                "SELECT * FROM checklist_items WHERE taskId = ?",
+                [task.id],
+                (err, checklistItems) => {
+                  if (err) {
+                    console.error(
+                      "Error fetching checklist items for task",
+                      task.id,
+                      ":",
+                      err.message
+                    );
+                    return reject(err);
+                  }
+                  console.log(
+                    "Checklist items for task",
+                    task.id,
+                    ":",
+                    checklistItems
+                  );
+                  tasks[index].checklistItems = checklistItems || [];
+
+                  remaining -= 1;
+                  if (remaining === 0) {
+                    project.tasks = tasks;
+                    console.log("Final assembled project:", project);
+                    resolve(project);
+                  }
+                }
+              );
+            });
+          }
+        );
       }
     );
   });

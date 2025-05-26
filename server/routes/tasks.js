@@ -126,6 +126,21 @@ router.put("/:id", (req, res) => {
     }
   });
 });
+
+router.put("/tasks/:taskId/status", (req, res) => {
+  const { taskId } = req.params;
+  const { status } = req.body;
+
+  db.run(
+    "UPDATE tasks SET status = ? WHERE id = ?",
+    [status, taskId],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ success: true });
+    }
+  );
+});
+
 //DELETE
 router.delete("/:id", (req, res) => {
   const { id } = req.params;

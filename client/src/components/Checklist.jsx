@@ -6,8 +6,9 @@ import {
   updateChecklistContent,
 } from "../api/checklist";
 import { authFetch } from "../api/api";
+import { updateTaskStatus } from "../api/tasks";
 
-function Checklist({ taskId, onStatusChange }) {
+function Checklist({ taskId, onStatusChange, onChecklistChange }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
@@ -57,7 +58,10 @@ function Checklist({ taskId, onStatusChange }) {
         if (!res.ok) throw new Error("Failed to fetch checklist");
         return res.json();
       })
-      .then((data) => setItems(data))
+      .then((data) => {
+        setItems(data);
+        if (onChecklistChange) onChecklistChange();
+      })
       .catch((err) => console.error(err.message))
       .finally(() => setLoading(false));
   };
@@ -80,7 +84,11 @@ function Checklist({ taskId, onStatusChange }) {
     }
 
     onStatusChange(newStatus);
-  }, [items, onStatusChange]);
+
+    updateTaskStatus(taskId, newStatus).catch((err) =>
+      console.error("Failed to update task status:", err)
+    );
+  }, [items, onStatusChange, taskId]);
 
   if (loading) return <p>Loading checklist...</p>;
 

@@ -3,7 +3,13 @@ import { useState } from "react";
 import Checklist from "./Checklist";
 import { deleteTask } from "../api/tasks";
 
-function TaskItem({ task, onDelete, isExpanded, onToggleExpand }) {
+function TaskItem({
+  task,
+  onDelete,
+  isExpanded,
+  onToggleExpand,
+  onChecklistChange,
+}) {
   const [status, setStatus] = useState(task.status);
   async function handleDelete() {
     try {
@@ -64,7 +70,11 @@ function TaskItem({ task, onDelete, isExpanded, onToggleExpand }) {
         </button>
       </div>
       <div className="mt-3" style={{ display: isExpanded ? "block" : "none" }}>
-        <Checklist taskId={task.id} onStatusChange={handleStatusChange} />
+        <Checklist
+          taskId={task.id}
+          onStatusChange={handleStatusChange}
+          onChecklistChange={onChecklistChange}
+        />
       </div>
     </li>
   );

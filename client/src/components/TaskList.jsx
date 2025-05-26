@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TaskItem from "./TaskItem";
 import { deleteTask } from "../api/tasks";
 
-function TaskList({ tasks, refetchTasks, selectedProjectId }) {
+function TaskList({ tasks, refetchTasks, selectedProjectId, onChecklistChange }) {
   const [expandedTaskId, setExpandedTaskId] = useState(null);
 
   const filteredTasks = selectedProjectId
@@ -30,7 +30,7 @@ function TaskList({ tasks, refetchTasks, selectedProjectId }) {
         <>
           <div className="d-flex justify-content-center">
             <h2 className="mb-3 font-monospace text-decoration-underline">
-              Your Tasks
+              Tasks
             </h2>
           </div>
 
@@ -47,6 +47,7 @@ function TaskList({ tasks, refetchTasks, selectedProjectId }) {
                   onDelete={() => onDelete(task.id)}
                   isExpanded={expandedTaskId === task.id}
                   onToggleExpand={() => toggleExpanded(task.id)}
+                  onChecklistChange={onChecklistChange}
                 />
               ))}
             </ul>
