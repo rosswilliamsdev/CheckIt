@@ -1,23 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import TaskItem from "./TaskItem";
 import { deleteTask } from "../api/tasks";
 
-function TaskList({ tasks, refetchTasks, selectedProjectId, onChecklistChange }) {
+function TaskList({
+  tasks,
+  refetchTasks,
+  selectedProjectId,
+  onChecklistChange,
+}) {
   const [expandedTaskId, setExpandedTaskId] = useState(null);
 
   const filteredTasks = selectedProjectId
     ? tasks.filter((task) => task.projectId === selectedProjectId)
     : tasks;
 
-  function onDelete(task) {
-    deleteTask(task.id)
-      .then(refetchTasks())
-      .catch((err) => console.error(err));
-  }
+  const handleDelete = useCallback(
+    (id) => {
+      deleteTask(id)
+        .then(() => refetchTasks())
+        .catch((err) => console.error(err));
+    },
+    [refetchTasks]
+  );
 
-  const toggleExpanded = (id) => {
+  const handleToggleExpand = useCallback((id) => {
     setExpandedTaskId((prev) => (prev === id ? null : id));
-  };
+  }, []);
 
   return (
     <div
@@ -44,9 +52,9 @@ function TaskList({ tasks, refetchTasks, selectedProjectId, onChecklistChange })
                 <TaskItem
                   key={task.id}
                   task={task}
-                  onDelete={() => onDelete(task.id)}
-                  isExpanded={expandedTaskId === task.id}
-                  onToggleExpand={() => toggleExpanded(task.id)}
+                  expandedTaskId={expandedTaskId}
+                  onDelete={handleDelete}
+                  onToggleExpand={handleToggleExpand}
                   onChecklistChange={onChecklistChange}
                 />
               ))}

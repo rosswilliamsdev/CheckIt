@@ -6,15 +6,16 @@ import { deleteTask } from "../api/tasks";
 function TaskItem({
   task,
   onDelete,
-  isExpanded,
+  expandedTaskId,
   onToggleExpand,
   onChecklistChange,
 }) {
   const [status, setStatus] = useState(task.status);
+  const isExpanded = expandedTaskId === task.id;
   async function handleDelete() {
     try {
       await deleteTask(task.id);
-      onDelete();
+      onDelete(task.id);
     } catch (err) {
       console.error("error deleting task", err);
     }
@@ -29,7 +30,7 @@ function TaskItem({
       <div className="d-flex justify-content-between align-items-center">
         <div
           className="flex-grow-1 cursor-pointer"
-          onClick={onToggleExpand}
+          onClick={() => onToggleExpand(task.id)}
           role="button"
         >
           <h5>
@@ -80,4 +81,4 @@ function TaskItem({
   );
 }
 
-export default TaskItem;
+export default React.memo(TaskItem);

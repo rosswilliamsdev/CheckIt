@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import TaskList from "../components/TaskList";
 import TaskForm from "../components/TaskForm";
 import Header from "../components/Header";
@@ -6,7 +6,6 @@ import { Sidebar } from "../components/Sidebar";
 import ProjectForm from "../components/ProjectForm";
 import { authFetch } from "../api/api";
 import { useAuth } from "../context/AuthContext";
-
 import { useNavigate } from "react-router-dom";
 import ProjectInfo from "../components/ProjectInfo";
 
@@ -38,7 +37,7 @@ export default function Home() {
     document.getElementById("root")?.classList.toggle("dark-mode", darkMode);
   }, [darkMode]);
 
-  const refetchTasks = () => {
+  const refetchTasks = useCallback(() => {
     authFetch("/tasks")
       .then((res) => res.json())
       .then((data) => {
@@ -46,14 +45,18 @@ export default function Home() {
         setProjectRefreshTrigger((prev) => prev + 1);
       })
       .catch((err) => console.error("Error fetching tasks:", err));
-  };
+  }, []);
 
-  const refetchProjects = () => {
+  const refetchProjects = useCallback(() => {
     authFetch("/projects")
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error("Error fetching projects:", err));
-  };
+  }, []);
+
+  const handleChecklistChange = useCallback(() => {
+    setProjectRefreshTrigger((prev) => prev + 1);
+  }, []);
 
   if (loading) return <div className="container mt-5">Loading...</div>;
   if (!user) return null;
@@ -89,7 +92,7 @@ export default function Home() {
           tasks={tasks}
           selectedProjectId={selectedProjectId}
           refetchTasks={refetchTasks}
-          onChecklistChange={() => setProjectRefreshTrigger((prev) => prev + 1)}
+          onChecklistChange={handleChecklistChange}
         />
       </div>
     </div>

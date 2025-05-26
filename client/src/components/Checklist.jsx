@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ChecklistItemForm from "./ChecklistItemForm";
 import {
   deleteChecklistItem,
@@ -7,6 +7,17 @@ import {
 } from "../api/checklist";
 import { authFetch } from "../api/api";
 import { updateTaskStatus } from "../api/tasks";
+
+// helper function
+const calculateStatus = (items) => {
+  const total = items.length;
+  const completed = items.filter((i) => i.isDone).length;
+
+  if (total === 0) return "pending";
+  if (completed === total) return "completed";
+  if (completed > 0) return "in_progress";
+  return "pending";
+};
 
 function Checklist({ taskId, onStatusChange, onChecklistChange }) {
   const [items, setItems] = useState([]);
@@ -17,19 +28,44 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
   async function handleDelete(checklistItem) {
     try {
       await deleteChecklistItem(checklistItem.id);
-      refetchChecklist();
+      setItems((prev) => prev.filter((item) => item.id !== checklistItem.id));
+      if (onStatusChange) {
+        const newStatus = calculateStatus(
+          items.filter((i) => i.id !== checklistItem.id)
+        );
+
+        onStatusChange(newStatus);
+        updateTaskStatus(taskId, newStatus).catch((err) =>
+          console.error("Failed to update task status:", err)
+        );
+      }
+      if (onChecklistChange) onChecklistChange();
     } catch (err) {
       console.error("error deleting task", err);
     }
   }
 
   const handleCheck = async (itemId) => {
-    const item = items.find((i) => i.id === itemId);
-    if (!item) return;
+    const updatedItems = items.map((item) =>
+      item.id === itemId ? { ...item, isDone: !item.isDone } : item
+    );
+    setItems(updatedItems);
 
     try {
+      const item = items.find((i) => i.id === itemId);
+      if (!item) return;
       await toggleChecklistItem(item);
-      refetchChecklist();
+
+      if (onStatusChange) {
+        const newStatus = calculateStatus(updatedItems);
+
+        onStatusChange(newStatus);
+        updateTaskStatus(taskId, newStatus).catch((err) =>
+          console.error("Failed to update task status:", err)
+        );
+      }
+      if (onChecklistChange) onChecklistChange();
+      // Optional: refetchChecklist(); // only if you really want to confirm
     } catch (err) {
       console.error("Error toggling checklist item:", err);
     }
@@ -43,15 +79,29 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
   const handleEditSubmit = async (id) => {
     try {
       await updateChecklistContent(id, editedContent);
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, content: editedContent } : item
+        )
+      );
       setEditingId(null);
       setEditedContent("");
-      refetchChecklist();
+
+      if (onStatusChange) {
+        const newStatus = calculateStatus(items);
+
+        onStatusChange(newStatus);
+        updateTaskStatus(taskId, newStatus).catch((err) =>
+          console.error("Failed to update task status:", err)
+        );
+      }
+      if (onChecklistChange) onChecklistChange();
     } catch (err) {
       console.error("Failed to update checklist item", err);
     }
   };
 
-  const refetchChecklist = () => {
+  const refetchChecklist = useCallback(() => {
     setLoading(true);
     authFetch(`/tasks/${taskId}/checklist`)
       .then((res) => {
@@ -59,11 +109,27 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
         return res.json();
       })
       .then((data) => {
-        setItems(data);
-        if (onChecklistChange) onChecklistChange();
+        // Only update state if data is different to prevent unnecessary re-renders
+        if (JSON.stringify(data) !== JSON.stringify(items)) {
+          setItems(data);
+        }
       })
       .catch((err) => console.error(err.message))
       .finally(() => setLoading(false));
+  }, [taskId, items]);
+
+  const handleNewItem = (newItem) => {
+    setItems((prev) => [...prev, newItem]);
+
+    if (onStatusChange) {
+      const newStatus = calculateStatus([...items, newItem]);
+
+      onStatusChange(newStatus);
+      updateTaskStatus(taskId, newStatus).catch((err) =>
+        console.error("Failed to update task status:", err)
+      );
+    }
+    if (onChecklistChange) onChecklistChange();
   };
 
   useEffect(() => {
@@ -73,21 +139,9 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
   useEffect(() => {
     if (!onStatusChange) return;
 
-    const total = items.length;
-    const completed = items.filter((i) => i.isDone).length;
-
-    let newStatus = "pending";
-    if (total > 0 && completed === total) {
-      newStatus = "completed";
-    } else if (completed > 0) {
-      newStatus = "in_progress";
-    }
+    const newStatus = calculateStatus(items);
 
     onStatusChange(newStatus);
-
-    updateTaskStatus(taskId, newStatus).catch((err) =>
-      console.error("Failed to update task status:", err)
-    );
   }, [items, onStatusChange, taskId]);
 
   if (loading) return <p>Loading checklist...</p>;
@@ -135,9 +189,9 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
           </li>
         ))}
       </ul>
-      <ChecklistItemForm taskId={taskId} refetchChecklist={refetchChecklist} />
+      <ChecklistItemForm taskId={taskId} onNewItem={handleNewItem} />
     </div>
   );
 }
 
-export default Checklist;
+export default React.memo(Checklist);
