@@ -47,4 +47,22 @@ async function deleteProject(projectId) {
 
 // probably need an updateProject api call for editing what tasks are in a project
 
-export { submitProject, deleteProject, getProject };
+async function updateProject(projectId, updateData) {
+  const response = await authFetch(
+    `http://localhost:3001/projects/${projectId}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updateData),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update project");
+  }
+
+  const updatedProject = await response.json();
+  return updatedProject;
+}
+
+export { submitProject, deleteProject, getProject, updateProject };
