@@ -56,6 +56,7 @@ function TaskList({
                   onDelete={handleDelete}
                   onToggleExpand={handleToggleExpand}
                   onChecklistChange={onChecklistChange}
+                  refetchTasks={refetchTasks}
                 />
               ))}
             </ul>

@@ -1,7 +1,5 @@
 import { authFetch } from "./api";
 
-
-
 async function submitTask(formData) {
   const response = await authFetch("http://localhost:3001/tasks", {
     method: "POST",
@@ -41,4 +39,14 @@ async function updateTaskStatus(id, status) {
   return await res.json();
 }
 
-export { deleteTask, submitTask, updateTaskStatus };
+async function updateTask(id, taskData) {
+  const res = await authFetch(`http://localhost:3001/tasks/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(taskData),
+  });
+  if (!res.ok) throw new Error("Failed to update task");
+  return res.json();
+}
+
+export { deleteTask, submitTask, updateTaskStatus, updateTask };

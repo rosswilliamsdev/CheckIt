@@ -25,13 +25,10 @@ const getProjectById = (id, userId) => {
             let remaining = tasks.length;
             if (remaining === 0) {
               project.tasks = [];
-              console.log("tasks:", project.tasks);
-              console.log("Final assembled project:", project);
               return resolve(project);
             }
 
             tasks.forEach((task, index) => {
-              console.log("Fetching checklist items for task:", task.id);
               db.all(
                 "SELECT * FROM checklist_items WHERE taskId = ?",
                 [task.id],
@@ -45,18 +42,11 @@ const getProjectById = (id, userId) => {
                     );
                     return reject(err);
                   }
-                  console.log(
-                    "Checklist items for task",
-                    task.id,
-                    ":",
-                    checklistItems
-                  );
                   tasks[index].checklistItems = checklistItems || [];
 
                   remaining -= 1;
                   if (remaining === 0) {
                     project.tasks = tasks;
-                    console.log("Final assembled project:", project);
                     resolve(project);
                   }
                 }
@@ -92,7 +82,6 @@ router.get("/:id", async (req, res) => {
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
-    console.log("Project from db:", project);
     res.json(project);
   } catch (error) {
     console.error(error);

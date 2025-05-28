@@ -19,14 +19,14 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    authFetch("/tasks")
+    authFetch("http://localhost:3001/tasks")
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error("Error fetching tasks:", err));
   }, []);
 
   useEffect(() => {
-    authFetch("/projects")
+    authFetch("http://localhost:3001/projects")
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error("Error fetching projects:", err));
@@ -38,7 +38,7 @@ export default function Home() {
   }, [darkMode]);
 
   const refetchTasks = useCallback(() => {
-    authFetch("/tasks")
+    authFetch("http://localhost:3001/tasks")
       .then((res) => res.json())
       .then((data) => {
         setTasks(data);
@@ -48,7 +48,7 @@ export default function Home() {
   }, []);
 
   const refetchProjects = useCallback(() => {
-    authFetch("/projects")
+    authFetch("http://localhost:3001/projects")
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error("Error fetching projects:", err));

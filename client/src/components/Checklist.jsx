@@ -103,7 +103,7 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
 
   const refetchChecklist = useCallback(() => {
     setLoading(true);
-    authFetch(`/tasks/${taskId}/checklist`)
+    authFetch(`http://localhost:3001/tasks/${taskId}/checklist`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch checklist");
         return res.json();

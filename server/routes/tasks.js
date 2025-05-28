@@ -7,7 +7,6 @@ router.use(authenticateToken);
 
 //GET
 router.get("/", (req, res) => {
-  console.log("GET tasks called");
   const sql = `
   SELECT 
     tasks.*, 
@@ -25,7 +24,6 @@ router.get("/", (req, res) => {
       console.error("Error fetching tasks:", err.message);
       res.status(500).json({ error: "Failed to fetch tasks" });
     } else {
-      console.log("tasks have been fetched by user: ", req.user);
       res.json(rows);
     }
   });
@@ -116,8 +114,8 @@ router.put("/:id", (req, res) => {
     id,
     userId,
   ];
-
   db.run(sql, params, function (err) {
+    console.log("db running");
     if (err) {
       console.error("Error updating task:", err.message);
       res.status(500).json({ error: "Failed to update task" });
