@@ -10,8 +10,20 @@ const router = express.Router();
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  if (!emailRegex.test(email.trim())) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  if (password.trim().length < 6) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 6 characters" });
   }
 
   try {
@@ -48,8 +60,20 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  if (!emailRegex.test(email.trim())) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  if (password.trim().length < 6) {
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 6 characters" });
   }
 
   try {

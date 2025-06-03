@@ -59,7 +59,7 @@ cd client
 npm install
 ```
 
-## Some Future Ideas:
+## Future Ideas:
 
 - Sorting tasks in different ways (date, categories)
 - Reordering tasks/checklist items by dragging

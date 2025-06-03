@@ -26,9 +26,11 @@ export default function LoginPage() {
         console.error("Login failed:", data.error);
         return;
       }
-      login(data.token);
-      navigate("/");
-      console.log("Logged in:", data);
+      const success = await login(data.token);
+      if (success) {
+        navigate("/");
+        console.log("Logged in:", data);
+      }
     } catch (err) {
       console.error("Login error:", err);
     }

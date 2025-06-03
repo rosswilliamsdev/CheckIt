@@ -18,15 +18,20 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = (token) => {
+  const login = async (token) => {
     localStorage.setItem("token", token);
-    fetch("http://localhost:3001/api/auth/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data) setUser(data);
+    try {
+      const res = await fetch("http://localhost:3001/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      if (!res.ok) return false;
+      const data = await res.json();
+      setUser(data);
+      return true;
+    } catch (err) {
+      console.error("Login failed:", err);
+      return false;
+    }
   };
 
   const logout = () => {

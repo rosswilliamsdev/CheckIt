@@ -63,6 +63,7 @@ function ProjectForm({ refetchProjects }) {
               name="description"
               value={formData.description}
               onChange={handleChange}
+              maxLength={300}
             />
           </div>
           <button type="submit" className="btn btn-primary mt-3 mb-3">

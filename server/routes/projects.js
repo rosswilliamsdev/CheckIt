@@ -92,6 +92,36 @@ router.get("/:id", async (req, res) => {
 // POST
 router.post("/", (req, res) => {
   const { title, description, dateCreated, dateCompleted } = req.body;
+
+  if (!title || typeof title !== "string" || title.trim().length === 0) {
+    return res.status(400).json({ error: "Project title is required." });
+  }
+  if (title.length > 100) {
+    return res
+      .status(400)
+      .json({ error: "Project title must be under 100 characters." });
+  }
+  if (description && description.length > 300) {
+    return res
+      .status(400)
+      .json({ error: "Description must be under 300 characters." });
+  }
+  if (dateCreated && isNaN(Date.parse(dateCreated))) {
+    return res.status(400).json({ error: "Invalid dateCreated format." });
+  }
+  if (dateCompleted && isNaN(Date.parse(dateCompleted))) {
+    return res.status(400).json({ error: "Invalid dateCompleted format." });
+  }
+  if (
+    dateCreated &&
+    dateCompleted &&
+    Date.parse(dateCompleted) < Date.parse(dateCreated)
+  ) {
+    return res
+      .status(400)
+      .json({ error: "dateCompleted cannot be earlier than dateCreated." });
+  }
+
   const userId = req.user.userId;
 
   const sql = `
@@ -117,6 +147,36 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { title, description, dateCreated, dateCompleted } = req.body;
+
+  if (!title || typeof title !== "string" || title.trim().length === 0) {
+    return res.status(400).json({ error: "Project title is required." });
+  }
+  if (title.length > 100) {
+    return res
+      .status(400)
+      .json({ error: "Project title must be under 100 characters." });
+  }
+  if (description && description.length > 300) {
+    return res
+      .status(400)
+      .json({ error: "Description must be under 300 characters." });
+  }
+  if (dateCreated && isNaN(Date.parse(dateCreated))) {
+    return res.status(400).json({ error: "Invalid dateCreated format." });
+  }
+  if (dateCompleted && isNaN(Date.parse(dateCompleted))) {
+    return res.status(400).json({ error: "Invalid dateCompleted format." });
+  }
+  if (
+    dateCreated &&
+    dateCompleted &&
+    Date.parse(dateCompleted) < Date.parse(dateCreated)
+  ) {
+    return res
+      .status(400)
+      .json({ error: "dateCompleted cannot be earlier than dateCreated." });
+  }
+
   const userId = req.user.userId;
 
   const sql = `

@@ -1,5 +1,9 @@
 import { authFetch } from "./api";
 
+// !!!
+// Backend assumes isDone property will be a 0 or 1
+// !!!
+
 async function createChecklistItem(taskId, content) {
   const res = await authFetch(
     `http://localhost:3001/tasks/${taskId}/checklist`,
@@ -39,11 +43,14 @@ async function toggleChecklistItem(item) {
   return await res.json();
 }
 
-async function updateChecklistContent(id, content) {
-  const res = await authFetch(`http://localhost:3001/checklist/${id}`, {
+async function updateChecklistContent(item) {
+  const res = await authFetch(`http://localhost:3001/checklist/${item.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({
+      content: item.content,
+      isDone: item.isDone,
+    }),
   });
 
   if (!res.ok) {

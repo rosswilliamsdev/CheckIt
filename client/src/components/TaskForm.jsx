@@ -68,6 +68,7 @@ function TaskForm({ selectedProjectId, refetchTasks }) {
                   value={formData.title}
                   onChange={handleChange}
                   required
+                  maxLength={50}
                 />
               </div>
               <div className="mb-3 d-flex flex-column">
@@ -79,6 +80,7 @@ function TaskForm({ selectedProjectId, refetchTasks }) {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
+                  maxLength={300}
                 />
               </div>
               <div className="mb-3 d-flex flex-column">

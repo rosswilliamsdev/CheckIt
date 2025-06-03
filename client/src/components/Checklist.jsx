@@ -78,23 +78,26 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
 
   const handleEditSubmit = async (id) => {
     try {
-      await updateChecklistContent(id, editedContent);
-      setItems((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, content: editedContent } : item
-        )
-      );
+      const item = items.find((i) => i.id === id);
+      if (!item) return;
+      await updateChecklistContent({
+        id,
+        content: editedContent,
+        isDone: item.isDone,
+      });
+      setItems((prev) => {
+        const updated = prev.map((item) =>
+          item.id === id
+            ? { ...item, content: editedContent, isDone: item.isDone }
+            : item
+        );
+        // Only recalculate status if isDone changed — in this case it hasn't, so skip it
+        return updated;
+      });
+
       setEditingId(null);
       setEditedContent("");
 
-      if (onStatusChange) {
-        const newStatus = calculateStatus(items);
-
-        onStatusChange(newStatus);
-        updateTaskStatus(taskId, newStatus).catch((err) =>
-          console.error("Failed to update task status:", err)
-        );
-      }
       if (onChecklistChange) onChecklistChange();
     } catch (err) {
       console.error("Failed to update checklist item", err);
@@ -136,13 +139,16 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
     refetchChecklist();
   }, [taskId]);
 
+  // Lightweight key based on the isDone status of all checklist items
+  const doneStatusKey = items.map((i) => i.isDone).join(",");
+
   useEffect(() => {
     if (!onStatusChange) return;
 
     const newStatus = calculateStatus(items);
 
     onStatusChange(newStatus);
-  }, [items, onStatusChange, taskId]);
+  }, [doneStatusKey, onStatusChange, taskId]);
 
   if (loading) return <p>Loading checklist...</p>;
 
@@ -167,6 +173,7 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
                 type="text"
                 className="form-control"
                 value={editedContent}
+                maxLength={100}
                 onChange={(e) => setEditedContent(e.target.value)}
                 onBlur={() => handleEditSubmit(item.id)}
                 onKeyDown={(e) => {

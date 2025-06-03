@@ -7,7 +7,8 @@ function EditTaskForm({ initialValues, onSubmit, onCancel }) {
     priority: initialValues.priority || "medium",
     dueDate: initialValues.dueDate || "",
     status: initialValues.status || "pending",
-    dateCreated: initialValues.dateCreated || new Date().toISOString().split("T")[0],
+    dateCreated:
+      initialValues.dateCreated || new Date().toISOString().split("T")[0],
   });
 
   const handleChange = (e) => {
@@ -31,15 +32,19 @@ function EditTaskForm({ initialValues, onSubmit, onCancel }) {
           value={formData.title}
           onChange={handleChange}
           required
+          maxLength={75}
         />
       </div>
       <div className="mb-3 d-flex flex-column">
-        <label className="form-label align-self-start fw-bold">Description</label>
+        <label className="form-label align-self-start fw-bold">
+          Description
+        </label>
         <textarea
           className="form-control"
           name="description"
           value={formData.description}
           onChange={handleChange}
+          maxLength={300}
         />
       </div>
       <div className="mb-3 d-flex flex-column">
@@ -66,8 +71,12 @@ function EditTaskForm({ initialValues, onSubmit, onCancel }) {
         />
       </div>
       <div className="d-flex justify-content-start gap-2">
-        <button type="submit" className="btn btn-primary">Save</button>
-        <button type="button" className="btn btn-secondary" onClick={onCancel}>Cancel</button>
+        <button type="submit" className="btn btn-primary">
+          Save
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+          Cancel
+        </button>
       </div>
     </form>
   );

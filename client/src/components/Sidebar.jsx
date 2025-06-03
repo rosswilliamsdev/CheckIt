@@ -24,11 +24,13 @@ function Sidebar({
     }
   };
 
+  
+
   console.log("Sidebar rendering projects:", projects);
   return (
     <div
       className="d-flex flex-column p-3 bg-light-subtle container rounded-4 mb-4 mx-1 align-content-center"
-      style={{ width: "15rem" }}
+      style={{ width: "20rem" }}
     >
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
       <br />

@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { getProject, updateProject } from "../api/projects";
 
-export default function ProjectInfo({ selectedProjectId, refreshTrigger }) {
+export default function ProjectInfo({
+  selectedProjectId,
+  projectRefreshTrigger,
+  setProjectRefreshTrigger,
+  refetchProjects,
+}) {
   const [project, setProject] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
@@ -12,6 +17,8 @@ export default function ProjectInfo({ selectedProjectId, refreshTrigger }) {
       const updated = { ...project, [field]: value };
       setProject(updated);
       await updateProject(project.id, updated);
+      setProjectRefreshTrigger((prev) => !prev); // trigger sidebar refresh
+      refetchProjects();
     } catch (error) {
       console.error("Failed to update project:", error);
     }
@@ -37,7 +44,7 @@ export default function ProjectInfo({ selectedProjectId, refreshTrigger }) {
       setEditedTitle("");
       setEditedDescription("");
     }
-  }, [selectedProjectId, refreshTrigger]);
+  }, [selectedProjectId, projectRefreshTrigger]);
 
   if (!project || !Array.isArray(project.tasks)) return null;
 
@@ -58,11 +65,44 @@ export default function ProjectInfo({ selectedProjectId, refreshTrigger }) {
         contentEditable
         suppressContentEditableWarning
         onBlur={(e) => {
-          const newText = e.target.innerText;
+          let newText = e.target.innerText;
+          if (newText.length > 19) {
+            newText = newText.slice(0, 19);
+            e.target.innerText = newText;
+          }
           setEditedTitle(newText);
           handleProjectUpdate("title", newText);
         }}
+        onInput={(e) => {
+          const text = e.target.innerText;
+          if (text.length > 19) {
+            const trimmed = text.slice(0, 19);
+            e.target.innerText = trimmed;
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(e.target);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        }}
         onKeyDown={(e) => {
+          const text = e.target.innerText;
+          if (
+            text.length >= 100 &&
+            ![
+              "Backspace",
+              "Delete",
+              "ArrowLeft",
+              "ArrowRight",
+              "ArrowUp",
+              "ArrowDown",
+            ].includes(e.key) &&
+            !e.ctrlKey &&
+            !e.metaKey
+          ) {
+            e.preventDefault();
+          }
           if (e.key === "Enter") {
             e.preventDefault();
             e.target.blur();
@@ -100,36 +140,53 @@ export default function ProjectInfo({ selectedProjectId, refreshTrigger }) {
         contentEditable
         suppressContentEditableWarning
         onBlur={(e) => {
-          const newText = e.target.innerText;
+          let newText = e.target.innerText;
+          if (newText.length > 300) {
+            newText = newText.slice(0, 300);
+            e.target.innerText = newText;
+          }
           setEditedDescription(newText);
           handleProjectUpdate("description", newText);
         }}
+        onInput={(e) => {
+          const text = e.target.innerText;
+          if (text.length > 300) {
+            const trimmed = text.slice(0, 300);
+            e.target.innerText = trimmed;
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(e.target);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        }}
         onKeyDown={(e) => {
+          const text = e.target.innerText;
+          if (
+            text.length >= 300 &&
+            ![
+              "Backspace",
+              "Delete",
+              "ArrowLeft",
+              "ArrowRight",
+              "ArrowUp",
+              "ArrowDown",
+            ].includes(e.key) &&
+            !e.ctrlKey &&
+            !e.metaKey
+          ) {
+            e.preventDefault();
+          }
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             e.target.blur();
           }
         }}
-        style={{ minHeight: "5rem" }}
+        style={{ minHeight: "5rem", width: "90%", maxHeight: "15rem" }}
       >
         {editedDescription}
       </p>
-      <style>
-        {`
-          .editable-field {
-            border: none;
-            outline: none;
-            border-radius: 0.375rem;
-            padding: 0.25rem 0.5rem;
-          }
-          .editable-field:hover,
-          .editable-field:focus {
-            border: 1px solid #6c757d;
-            background-color: #f8f9fa;
-            cursor: text;
-          }
-        `}
-      </style>
     </div>
   );
 }

@@ -24,6 +24,7 @@ function ChecklistItemForm({ taskId, onNewItem }) {
         placeholder="New checklist item"
         value={content}
         onChange={(e) => setContent(e.target.value)}
+        maxLength={100}
       />
       <button type="submit" className="btn btn-primary">
         Add

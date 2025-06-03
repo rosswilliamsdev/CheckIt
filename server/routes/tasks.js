@@ -42,7 +42,35 @@ router.post("/", (req, res) => {
     repeat,
     dateCreated,
   } = req.body;
+
+  if (!title || typeof title !== "string" || title.trim().length === 0) {
+    return res.status(400).json({ error: "Task title is required." });
+  }
+  if (title.length > 100) {
+    return res
+      .status(400)
+      .json({ error: "Task title must be under 100 characters." });
+  }
+  if (description && description.length > 300) {
+    return res
+      .status(400)
+      .json({ error: "Description must be under 300 characters." });
+  }
+  if (dateCreated && isNaN(Date.parse(dateCreated))) {
+    return res.status(400).json({ error: "Invalid dateCreated format." });
+  }
+
   const userId = req.user.userId;
+
+  const validStatuses = ["pending", "in progress", "completed"];
+  if (status && !validStatuses.includes(status)) {
+    return res.status(400).json({ error: "Invalid task status." });
+  }
+
+  const validPriorities = ["low", "medium", "high"];
+  if (priority && !validPriorities.includes(priority)) {
+    return res.status(400).json({ error: "Invalid task priority." });
+  }
 
   const sql = `
     INSERT INTO tasks (
@@ -90,7 +118,47 @@ router.put("/:id", (req, res) => {
     dateCreated,
     dateCompleted,
   } = req.body;
+
+  if (!title || typeof title !== "string" || title.trim().length === 0) {
+    return res.status(400).json({ error: "Task title is required." });
+  }
+  if (title.length > 100) {
+    return res
+      .status(400)
+      .json({ error: "Task title must be under 100 characters." });
+  }
+  if (description && description.length > 300) {
+    return res
+      .status(400)
+      .json({ error: "Description must be under 300 characters." });
+  }
+  if (dateCreated && isNaN(Date.parse(dateCreated))) {
+    return res.status(400).json({ error: "Invalid dateCreated format." });
+  }
+  if (dateCompleted && isNaN(Date.parse(dateCompleted))) {
+    return res.status(400).json({ error: "Invalid dateCompleted format." });
+  }
+  if (
+    dateCreated &&
+    dateCompleted &&
+    Date.parse(dateCompleted) < Date.parse(dateCreated)
+  ) {
+    return res
+      .status(400)
+      .json({ error: "dateCompleted cannot be earlier than dateCreated." });
+  }
+
   const userId = req.user.userId;
+
+  const validStatuses = ["pending", "in progress", "completed"];
+  if (status && !validStatuses.includes(status)) {
+    return res.status(400).json({ error: "Invalid task status." });
+  }
+
+  const validPriorities = ["low", "medium", "high"];
+  if (priority && !validPriorities.includes(priority)) {
+    return res.status(400).json({ error: "Invalid task priority." });
+  }
 
   const sql = `
     UPDATE tasks SET
@@ -128,15 +196,31 @@ router.put("/:id", (req, res) => {
 router.put("/tasks/:taskId/status", (req, res) => {
   const { taskId } = req.params;
   const { status } = req.body;
+  const userId = req.user.userId;
 
-  db.run(
-    "UPDATE tasks SET status = ? WHERE id = ?",
-    [status, taskId],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ success: true });
+  const validStatuses = ["pending", "in progress", "completed"];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: "Invalid task status." });
+  }
+
+  const checkSql = "SELECT userId FROM tasks WHERE id = ?";
+  db.get(checkSql, [taskId], (err, task) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error." });
     }
-  );
+    if (!task || task.userId !== userId) {
+      return res.status(403).json({ error: "Unauthorized or task not found." });
+    }
+
+    db.run(
+      "UPDATE tasks SET status = ? WHERE id = ?",
+      [status, taskId],
+      function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+      }
+    );
+  });
 });
 
 //DELETE

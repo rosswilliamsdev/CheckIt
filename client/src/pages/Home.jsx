@@ -85,7 +85,9 @@ export default function Home() {
         />
         <ProjectInfo
           selectedProjectId={selectedProjectId}
-          refreshTrigger={projectRefreshTrigger}
+          projectRefreshTrigger={projectRefreshTrigger}
+          setProjectRefreshTrigger={setProjectRefreshTrigger}
+          refetchProjects={refetchProjects}
         />
         <TaskList
           setTasks={setTasks}
