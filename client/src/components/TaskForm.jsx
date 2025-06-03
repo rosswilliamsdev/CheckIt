@@ -56,7 +56,11 @@ function TaskForm({ selectedProjectId, refetchTasks }) {
             Create A New Task
           </h2>
           {isExpanded && (
-            <form onSubmit={handleSubmit} className="m-4 d-flex flex-column">
+            <form
+              onSubmit={handleSubmit}
+              className="m-4 d-flex flex-column m-auto"
+              style={{ width: "50%" }}
+            >
               <div className="mb-3 d-flex flex-column">
                 <label className="form-label align-self-start fw-bold">
                   Title

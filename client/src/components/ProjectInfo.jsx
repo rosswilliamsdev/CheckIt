@@ -136,7 +136,7 @@ export default function ProjectInfo({
         </div>
       </div>
       <p
-        className="editable-field"
+        className="editable-field text-center"
         contentEditable
         suppressContentEditableWarning
         onBlur={(e) => {

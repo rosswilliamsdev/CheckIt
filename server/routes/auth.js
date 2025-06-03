@@ -27,6 +27,17 @@ router.post("/signup", async (req, res) => {
   }
 
   try {
+    const existingUser = await new Promise((resolve, reject) => {
+      db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+        if (err) return reject(err);
+        resolve(row);
+      });
+    });
+
+    if (existingUser) {
+      return res.status(409).json({ error: "Email already in use" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     db.run(
       "INSERT INTO users (email, name, passwordHash) VALUES (?, ?, ?)",

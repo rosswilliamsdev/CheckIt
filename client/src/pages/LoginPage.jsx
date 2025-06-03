@@ -48,6 +48,9 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            maxLength={254}
+            inputMode="email"
+            autoComplete="email"
           />
         </div>
         <div className="mb-3">

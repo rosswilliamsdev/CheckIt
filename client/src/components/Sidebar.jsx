@@ -24,8 +24,6 @@ function Sidebar({
     }
   };
 
-  
-
   console.log("Sidebar rendering projects:", projects);
   return (
     <div

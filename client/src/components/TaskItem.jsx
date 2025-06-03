@@ -40,7 +40,10 @@ function TaskItem({
   }
 
   return (
-    <li className="list-group-item border border-2 border-black m-3 p-4 rounded-5 shadow-md">
+    <li
+      className="list-group-item border border-2 border-black m-3 p-4 rounded-5 shadow-md"
+      style={{ width: "66%", minWidth: "20rem" }}
+    >
       {isEditing ? (
         <EditTaskForm
           initialValues={task}

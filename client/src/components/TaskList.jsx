@@ -29,11 +29,13 @@ function TaskList({
 
   return (
     <div
-      className="container bg-light-subtle rounded-4 p-4"
+      className="container bg-light-subtle rounded-4 p-4 m-auto"
       style={{ minHeight: "40rem" }}
     >
       {selectedProjectId === null ? (
-        <h5 className="mb-3 font-monospace">Select a Project to View Tasks</h5>
+        <h5 className="mb-3 font-monospace text-center">
+          Select a Project to View Tasks
+        </h5>
       ) : (
         <>
           <div className="d-flex justify-content-center">
@@ -47,7 +49,7 @@ function TaskList({
               No tasks found.
             </p>
           ) : (
-            <ul className="container list-group mb-0 mt-2">
+            <ul className="container d-flex flex-column list-group mb-0 mt-2 align-items-center">
               {filteredTasks.map((task) => (
                 <TaskItem
                   key={task.id}

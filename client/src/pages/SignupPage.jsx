@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,7 +21,13 @@ export default function SignupPage() {
 
       const data = await res.json();
 
+      if (res.status === 409) {
+        setError(data.error || "Email already registered");
+        return;
+      }
+
       if (!res.ok) {
+        setError("Signup failed");
         console.error("Signup failed:", data.error);
         return;
       }
@@ -36,6 +43,7 @@ export default function SignupPage() {
   return (
     <div className="d-flex flex-column justify-content-center align-items-center vh-100">
       <h2>Sign Up</h2>
+      {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label>Email</label>
@@ -45,6 +53,9 @@ export default function SignupPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            maxLength={254}
+            inputMode="email"
+            autoComplete="email"
           />
         </div>
         <div className="mb-3">
