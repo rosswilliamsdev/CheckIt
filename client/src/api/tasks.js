@@ -1,7 +1,7 @@
 import { authFetch } from "./api";
 
 async function submitTask(formData) {
-  const response = await authFetch("http://localhost:3001/tasks", {
+  const response = await authFetch(`${import.meta.env.VITE_API_URL}/tasks`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -16,9 +16,12 @@ async function submitTask(formData) {
 }
 
 async function deleteTask(taskId) {
-  const response = await authFetch(`http://localhost:3001/tasks/${taskId}`, {
-    method: "DELETE",
-  });
+  const response = await authFetch(
+    `${import.meta.env.VITE_API_URL}/tasks/${taskId}`,
+    {
+      method: "DELETE",
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to delete task");
@@ -26,11 +29,14 @@ async function deleteTask(taskId) {
 }
 
 async function updateTaskStatus(id, status) {
-  const res = await authFetch(`http://localhost:3001/tasks/${id}/status`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
-  });
+  const res = await authFetch(
+    `${import.meta.env.VITE_API_URL}/tasks/${id}/status`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Failed to update task status");
@@ -40,7 +46,7 @@ async function updateTaskStatus(id, status) {
 }
 
 async function updateTask(id, taskData) {
-  const res = await authFetch(`http://localhost:3001/tasks/${id}`, {
+  const res = await authFetch(`${import.meta.env.VITE_API_URL}/tasks/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(taskData),

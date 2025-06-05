@@ -49,7 +49,7 @@ async function deleteProject(projectId) {
 
 async function updateProject(projectId, updateData) {
   const response = await authFetch(
-    `http://localhost:3001/projects/${projectId}`,
+    `${import.meta.env.VITE_API_URL}/projects/${projectId}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },

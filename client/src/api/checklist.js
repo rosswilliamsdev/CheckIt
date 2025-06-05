@@ -6,7 +6,7 @@ import { authFetch } from "./api";
 
 async function createChecklistItem(taskId, content) {
   const res = await authFetch(
-    `http://localhost:3001/tasks/${taskId}/checklist`,
+    `${import.meta.env.VITE_API_URL}/${taskId}/checklist`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -18,7 +18,7 @@ async function createChecklistItem(taskId, content) {
 }
 
 async function deleteChecklistItem(id) {
-  authFetch(`http://localhost:3001/checklist/${id}`, {
+  authFetch(`${import.meta.env.VITE_API_URL}/checklist/${id}`, {
     method: "DELETE",
   }).then((res) => {
     if (!res.ok) throw new Error("Failed to delete checklist item");
@@ -30,11 +30,14 @@ async function deleteChecklistItem(id) {
 async function toggleChecklistItem(item) {
   const updatedIsDone = item.isDone ? 0 : 1;
 
-  const res = await authFetch(`http://localhost:3001/checklist/${item.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ isDone: updatedIsDone, content: item.content }),
-  });
+  const res = await authFetch(
+    `${import.meta.env.VITE_API_URL}/checklist/${item.id}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isDone: updatedIsDone, content: item.content }),
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Failed to toggle checklist item");
@@ -44,14 +47,17 @@ async function toggleChecklistItem(item) {
 }
 
 async function updateChecklistContent(item) {
-  const res = await authFetch(`http://localhost:3001/checklist/${item.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: item.content,
-      isDone: item.isDone,
-    }),
-  });
+  const res = await authFetch(
+    `${import.meta.env.VITE_API_URL}/checklist/${item.id}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: item.content,
+        isDone: item.isDone,
+      }),
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Failed to update checklist item content");

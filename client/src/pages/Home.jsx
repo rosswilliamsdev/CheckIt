@@ -19,14 +19,14 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    authFetch("http://localhost:3001/tasks")
+    authFetch(`${import.meta.env.VITE_API_URL}/tasks`)
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error("Error fetching tasks:", err));
   }, []);
 
   useEffect(() => {
-    authFetch("http://localhost:3001/projects")
+    authFetch(`${import.meta.env.VITE_API_URL}/projects`)
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error("Error fetching projects:", err));
@@ -38,7 +38,7 @@ export default function Home() {
   }, [darkMode]);
 
   const refetchTasks = useCallback(() => {
-    authFetch("http://localhost:3001/tasks")
+    authFetch(`${import.meta.env.VITE_API_URL}/tasks`)
       .then((res) => res.json())
       .then((data) => {
         setTasks(data);
@@ -48,7 +48,7 @@ export default function Home() {
   }, []);
 
   const refetchProjects = useCallback(() => {
-    authFetch("http://localhost:3001/projects")
+    authFetch(`${import.meta.env.VITE_API_URL}/projects`)
       .then((res) => res.json())
       .then((data) => setProjects(data))
       .catch((err) => console.error("Error fetching projects:", err));
