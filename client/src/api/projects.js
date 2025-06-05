@@ -1,7 +1,7 @@
 import { authFetch } from "./api";
 
 async function submitProject(formData) {
-  const response = await authFetch("http://localhost:3001/projects", {
+  const response = await authFetch(`${import.meta.env.VITE_API_URL}/projects`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -17,7 +17,7 @@ async function submitProject(formData) {
 
 async function getProject(projectId) {
   const response = await authFetch(
-    `http://localhost:3001/projects/${projectId}`,
+    `${import.meta.env.VITE_API_URL}/projects/${projectId}`,
     {
       method: "GET",
     }
@@ -34,7 +34,7 @@ async function getProject(projectId) {
 
 async function deleteProject(projectId) {
   const response = await authFetch(
-    `http://localhost:3001/projects/${projectId}`,
+    `${import.meta.env.VITE_API_URL}/projects/${projectId}`,
     {
       method: "DELETE",
     }
