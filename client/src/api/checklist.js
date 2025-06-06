@@ -6,7 +6,7 @@ import { authFetch } from "./api";
 
 async function createChecklistItem(taskId, content) {
   const res = await authFetch(
-    `${import.meta.env.VITE_API_URL}/${taskId}/checklist`,
+    `${import.meta.env.VITE_API_URL}/tasks/${taskId}/checklist`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
