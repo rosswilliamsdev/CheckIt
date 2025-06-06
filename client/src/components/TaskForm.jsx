@@ -53,13 +53,13 @@ function TaskForm({ selectedProjectId, refetchTasks }) {
                 isExpanded ? "bi-caret-down-fill" : "bi-caret-right-fill"
               }`}
             ></i>
-            Create A New Task
+            Add A New Task
           </h2>
           {isExpanded && (
             <form
               onSubmit={handleSubmit}
-              className="m-4 d-flex flex-column m-auto"
-              style={{ width: "50%" }}
+              className="m-4 d-flex flex-column m-auto form-slide"
+              style={{ width: "90%", maxWidth: "40rem" }}
             >
               <div className="mb-3 d-flex flex-column">
                 <label className="form-label align-self-start fw-bold">

@@ -29,7 +29,7 @@ function ProjectForm({ refetchProjects }) {
   return (
     <div className="container bg-light-subtle  p-3 rounded-4 mb-4">
       <h2
-        className="font-monospace d-flex align-items-center justify-content-center"
+        className="font-monospace d-flex align-items-center justify-content-center text-center"
         onClick={() => setIsExpanded((prev) => !prev)}
         role="button"
       >
@@ -38,13 +38,13 @@ function ProjectForm({ refetchProjects }) {
             isExpanded ? "bi-caret-down-fill" : "bi-caret-right-fill"
           }`}
         ></i>
-        Create A New Project
+        Add A New Project
       </h2>
       {isExpanded && (
         <form
           onSubmit={handleSubmit}
-          className="m-4 d-flex flex-column m-auto"
-          style={{ width: "50%" }}
+          className="form-slide m-4 d-flex flex-column m-auto"
+          style={{ width: "90%", maxWidth: "40rem" }}
         >
           <div className="mb-3 d-flex flex-column">
             <label className="form-label align-self-start fw-bold">Title</label>

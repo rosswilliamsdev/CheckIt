@@ -153,7 +153,7 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
   if (loading) return <p>Loading checklist...</p>;
 
   return (
-    <div>
+    <div className="form-slide">
       <h5>Checklist</h5>
       {items.length === 0 && <p>No items in this checklist.</p>}
       <ul className="list-group mt-2">

@@ -17,7 +17,7 @@ function ChecklistItemForm({ taskId, onNewItem }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-3 d-flex">
+    <form onSubmit={handleSubmit} className="mt-3 d-flex form-slide">
       <input
         type="text"
         className="form-control me-2"
