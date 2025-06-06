@@ -26,7 +26,6 @@ async function deleteChecklistItem(id) {
 }
 
 // item: { id, isDone, content }
-// it's an update
 async function toggleChecklistItem(item) {
   const updatedIsDone = item.isDone ? 0 : 1;
 

@@ -106,7 +106,7 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
 
   const refetchChecklist = useCallback(() => {
     setLoading(true);
-    authFetch(`http://localhost:3001/tasks/${taskId}/checklist`)
+    authFetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}/checklist`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch checklist");
         return res.json();
