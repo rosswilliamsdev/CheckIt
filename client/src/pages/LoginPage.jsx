@@ -5,31 +5,35 @@ import { useAuth } from "../context/AuthContext";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setError("");
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await res.json();
 
       if (!res.ok) {
         console.error("Login failed:", data.error);
+        setError(`Login failed: ${data.error || "Unexpected error occurred."}`);
         return;
       }
       const success = await login(data.token);
       if (success) {
         navigate("/");
-        console.log("Logged in:", data);
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -39,6 +43,7 @@ export default function LoginPage() {
   return (
     <div className="d-flex flex-column justify-content-center align-items-center vh-100">
       <h2>Login</h2>
+      {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label>Email</label>
