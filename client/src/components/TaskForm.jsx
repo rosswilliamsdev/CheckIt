@@ -59,7 +59,7 @@ function TaskForm({ selectedProjectId, refetchTasks }) {
             <form
               onSubmit={handleSubmit}
               className="m-4 d-flex flex-column m-auto form-slide"
-              style={{ width: "90%", maxWidth: "40rem" }}
+              style={{ width: "80%", maxWidth: "40rem" }}
             >
               <div className="mb-3 d-flex flex-column">
                 <label className="form-label align-self-start fw-bold">

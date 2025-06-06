@@ -44,7 +44,7 @@ function ProjectForm({ refetchProjects }) {
         <form
           onSubmit={handleSubmit}
           className="form-slide m-4 d-flex flex-column m-auto"
-          style={{ width: "90%", maxWidth: "40rem" }}
+          style={{ width: "80%", maxWidth: "40rem" }}
         >
           <div className="mb-3 d-flex flex-column">
             <label className="form-label align-self-start fw-bold">Title</label>
