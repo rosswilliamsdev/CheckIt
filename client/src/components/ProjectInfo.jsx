@@ -183,7 +183,7 @@ export default function ProjectInfo({
             e.target.blur();
           }
         }}
-        style={{ minHeight: "5rem", width: "90%", maxHeight: "15rem" }}
+        style={{ minHeight: "5rem", width: "90%", maxHeight: "15rem", maxWidth: "40rem" }}
       >
         {editedDescription}
       </p>

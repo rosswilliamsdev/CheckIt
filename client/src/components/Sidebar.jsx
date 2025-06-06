@@ -50,7 +50,8 @@ function Sidebar({
       <div
         className={`d-flex flex-column p-3 bg-light-subtle container rounded-4 mb-4 mx-1 align-content-center position-fixed top-0 start-0 vh-100 transition-transform`}
         style={{
-          width: "20rem",
+          width: "100%",
+          maxWidth: "20rem",
           zIndex: 2,
           transform:
             isSidebarOpen || !isMobile ? "translateX(0)" : "translateX(-100%)",

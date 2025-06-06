@@ -166,3 +166,11 @@ input[type="date"] {
     opacity: 1;
   }
 }
+
+body {
+  overflow-x: hidden;
+}
+
+#root {
+  overflow-x: hidden;
+}
