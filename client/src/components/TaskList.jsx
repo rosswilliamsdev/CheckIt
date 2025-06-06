@@ -15,10 +15,13 @@ function TaskList({
     : tasks;
 
   const handleDelete = useCallback(
-    (id) => {
-      deleteTask(id)
-        .then(() => refetchTasks())
-        .catch((err) => console.error(err));
+    async (id) => {
+      try {
+        await deleteTask(id);
+        await refetchTasks();
+      } catch (err) {
+        console.error(err);
+      }
     },
     [refetchTasks]
   );

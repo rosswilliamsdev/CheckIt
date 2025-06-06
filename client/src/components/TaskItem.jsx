@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import Checklist from "./Checklist";
-import { deleteTask, updateTask } from "../api/tasks";
+import { updateTask } from "../api/tasks";
 import EditTaskForm from "./EditTaskForm";
 
 function TaskItem({
@@ -15,10 +15,10 @@ function TaskItem({
   const [status, setStatus] = useState(task.status);
   const [isEditing, setIsEditing] = useState(false);
   const isExpanded = expandedTaskId === task.id;
+
   async function handleDelete() {
     try {
-      await deleteTask(task.id);
-      onDelete(task.id);
+      await onDelete(task.id);
     } catch (err) {
       console.error("error deleting task", err);
     }

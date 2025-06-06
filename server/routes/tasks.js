@@ -118,7 +118,7 @@ router.put("/:id", (req, res) => {
     dateCreated,
     dateCompleted,
   } = req.body;
-
+  console.log("Attempting to update task", req.body);
   if (!title || typeof title !== "string" || title.trim().length === 0) {
     return res.status(400).json({ error: "Task title is required." });
   }
@@ -184,9 +184,12 @@ router.put("/:id", (req, res) => {
   ];
   db.run(sql, params, function (err) {
     console.log("db running");
+
     if (err) {
       console.error("Error updating task:", err.message);
       res.status(500).json({ error: "Failed to update task" });
+    } else if (this.changes === 0) {
+      return res.status(404).json({ error: "Task not found or unauthorized" });
     } else {
       res.status(200).json({ message: "Task updated", changes: this.changes });
     }
@@ -226,10 +229,12 @@ router.put("/tasks/:taskId/status", (req, res) => {
 //DELETE
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
-
+  console.log("Attempting to delete task", id, "for user", req.user.userId);
   const sql = `DELETE FROM tasks WHERE id = ? AND userId = ?`;
 
   db.run(sql, [id, req.user.userId], function (err) {
+    console.log("DELETE changes:", this.changes);
+
     if (err) {
       console.error("Error deleting task:", err.message);
       res.status(500).json({ error: "Failed to delete task" });
