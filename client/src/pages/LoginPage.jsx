@@ -33,6 +33,7 @@ export default function LoginPage() {
       }
       const success = await login(data.token);
       if (success) {
+        
         navigate("/");
       }
     } catch (err) {

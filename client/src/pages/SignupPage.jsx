@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -36,7 +37,10 @@ export default function SignupPage() {
       }
 
       localStorage.setItem("token", data.token);
-      navigate("/login");
+      toast.success(
+        "Thanks for signing up! Log in to get started on your next project 💪🏼"
+      );
+      setTimeout(() => navigate("/login"), 600);
       console.log("Signed up:", data);
     } catch (err) {
       console.error("Signup error:", err);

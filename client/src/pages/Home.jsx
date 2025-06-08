@@ -78,16 +78,17 @@ export default function Home() {
           setProjects={setProjects}
           refetchProjects={refetchProjects}
         />
-        <TaskForm
-          setTasks={setTasks}
-          selectedProjectId={selectedProjectId}
-          refetchTasks={refetchTasks}
-        />
+
         <ProjectInfo
           selectedProjectId={selectedProjectId}
           projectRefreshTrigger={projectRefreshTrigger}
           setProjectRefreshTrigger={setProjectRefreshTrigger}
           refetchProjects={refetchProjects}
+        />
+        <TaskForm
+          setTasks={setTasks}
+          selectedProjectId={selectedProjectId}
+          refetchTasks={refetchTasks}
         />
         <TaskList
           setTasks={setTasks}

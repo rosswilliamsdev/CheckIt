@@ -190,6 +190,7 @@ function Checklist({ taskId, onStatusChange, onChecklistChange }) {
               className="btn btn-sm btn-outline-danger ms-auto"
               onClick={() => handleDelete(item)}
               aria-label="Delete checklist item"
+              
             >
               <i className="bi bi-trash"></i>
             </button>

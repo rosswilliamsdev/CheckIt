@@ -39,8 +39,8 @@ function Sidebar({
       {isMobile && (
         <div>
           <button
-            className="btn btn-outline-secondary position-fixed top-0 start-0 m-2 z-3"
-            style={{ zIndex: 1050 }}
+            className="btn btn-outline-secondary position-fixed top-0 start-0 m-2 z-3 fw-bold"
+            style={{ zIndex: 1050, borderWidth: "2px" }}
             onClick={() => setIsSidebarOpen((prev) => !prev)}
           >
             ☰

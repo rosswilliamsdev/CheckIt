@@ -68,7 +68,28 @@ function TaskItem({
               </h5>
               <p className="mb-1 text-muted">{task.description}</p>
               <small className="text-secondary">
-                Due: {task.dueDate || "None"} | Priority: {task.priority}
+                Due:{" "}
+                <strong>
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString("en-US")
+                    : "None"}
+                </strong>{" "}
+                | Priority:{" "}
+                <strong
+                  className={`text-${
+                    task.priority === "high"
+                      ? "danger"
+                      : task.priority === "medium"
+                      ? "priority-medium"
+                      : "secondary"
+                  }`}
+                >
+                  {task.priority === "high"
+                    ? "High"
+                    : task.priority === "medium"
+                    ? "Medium"
+                    : "Low"}
+                </strong>
               </small>
               <span
                 className={`badge border border-black mx-2 ${
@@ -89,14 +110,14 @@ function TaskItem({
             </div>
             <div>
               <button
-                className="btn btn-outline-secondary ms-2"
+                className="btn btn-outline-secondary m-1"
                 title="Edit"
                 onClick={() => setIsEditing(true)}
               >
                 <i className="bi bi-pencil"></i>
               </button>
               <button
-                className="btn btn-outline-danger ms-2"
+                className="btn btn-outline-danger m-1"
                 title="Delete"
                 onClick={handleDelete}
               >
