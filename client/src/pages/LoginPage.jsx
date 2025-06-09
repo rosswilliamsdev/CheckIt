@@ -6,12 +6,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/login`,
@@ -33,11 +35,12 @@ export default function LoginPage() {
       }
       const success = await login(data.token);
       if (success) {
-        
         navigate("/");
       }
     } catch (err) {
       console.error("Login error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,9 +72,15 @@ export default function LoginPage() {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Log In
-        </button>
+        {loading ? (
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        ) : (
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            Log In
+          </button>
+        )}
       </form>
       <p className="mt-3">
         Don't have an account? <Link to="/signup">Sign up</Link>

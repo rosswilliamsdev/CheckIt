@@ -6,10 +6,12 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch(
@@ -44,6 +46,8 @@ export default function SignupPage() {
       console.log("Signed up:", data);
     } catch (err) {
       console.error("Signup error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,9 +80,15 @@ export default function SignupPage() {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Sign Up
-        </button>
+        {loading ? (
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        ) : (
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            Sign Up
+          </button>
+        )}
       </form>
       <p className="mt-3">
         Already have an account? <Link to="/login">Log in</Link>
