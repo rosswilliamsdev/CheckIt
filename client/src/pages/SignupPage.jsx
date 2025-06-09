@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import LoginSignupHeader from "../components/LoginSignupHeader";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -52,7 +53,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="d-flex flex-column justify-content-center align-items-center vh-100">
+    <div className="d-flex flex-column justify-content-center align-items-center vh-100 font-monospace">
+      <LoginSignupHeader />
       <h2>Sign Up</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
