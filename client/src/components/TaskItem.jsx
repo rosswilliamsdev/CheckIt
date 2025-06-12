@@ -16,6 +16,8 @@ function TaskItem({
   const [isEditing, setIsEditing] = useState(false);
   const isExpanded = expandedTaskId === task.id;
 
+  console.log("Task dueDate raw:", task.dueDate);
+
   async function handleDelete() {
     try {
       await onDelete(task.id);
@@ -70,8 +72,17 @@ function TaskItem({
               <small className="text-secondary">
                 Due:{" "}
                 <strong>
-                  {task.dueDate
-                    ? new Date(task.dueDate).toLocaleDateString("en-US")
+                  {typeof task.dueDate === "string" &&
+                  task.dueDate.trim() !== "" &&
+                  !isNaN(new Date(task.dueDate + "T00:00:00"))
+                    ? new Date(task.dueDate + "T00:00:00").toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )
                     : "None"}
                 </strong>{" "}
                 | Priority:{" "}

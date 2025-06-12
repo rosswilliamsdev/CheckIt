@@ -41,6 +41,7 @@ export default function Home() {
     authFetch(`${import.meta.env.VITE_API_URL}/tasks`)
       .then((res) => res.json())
       .then((data) => {
+        console.log("Fetched tasks:", data);
         setTasks(data);
         setProjectRefreshTrigger((prev) => prev + 1);
       })

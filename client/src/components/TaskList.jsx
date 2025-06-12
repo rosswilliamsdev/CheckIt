@@ -10,9 +10,14 @@ function TaskList({
 }) {
   const [expandedTaskId, setExpandedTaskId] = useState(null);
 
+  const normalizedTasks = tasks.map((task) => ({
+    ...task,
+    projectId: task.projectid,
+  }));
+
   const filteredTasks = selectedProjectId
-    ? tasks.filter((task) => task.projectId === selectedProjectId)
-    : tasks;
+    ? normalizedTasks.filter((task) => task.projectId === selectedProjectId)
+    : normalizedTasks;
 
   const handleDelete = useCallback(
     async (id) => {
