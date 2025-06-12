@@ -34,7 +34,7 @@ function Sidebar({
   };
 
   return (
-    <div style={{ maxWidth: "15rem" }}>
+    <div className="sidebar" style={{ maxWidth: "15rem" }}>
       {isMobile && (
         <div>
           <button

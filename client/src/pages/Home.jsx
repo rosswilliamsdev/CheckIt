@@ -62,7 +62,10 @@ export default function Home() {
   if (loading) return <div className="container mt-5">Loading...</div>;
   if (!user) return null;
   return (
-    <div className="d-flex" style={{ minHeight: "100vh", width: "100vw" }}>
+    <div
+      className="d-flex m-auto justify-content-center"
+      style={{ minHeight: "100vh", width: "100vw" }}
+    >
       <Sidebar
         projects={projects}
         setProjects={setProjects}

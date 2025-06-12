@@ -179,3 +179,7 @@ body {
   color: #d49100;
   font-weight: bold;
 }
+
+.sidebar {
+  position: absolute;
+}

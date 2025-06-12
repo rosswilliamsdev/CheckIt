@@ -38,7 +38,7 @@ function ProjectForm({ refetchProjects }) {
             isExpanded ? "bi-caret-down-fill" : "bi-caret-right-fill"
           }`}
         ></i>
-        Add A New Project
+        Create Project
       </h2>
       {isExpanded && (
         <form

@@ -53,7 +53,7 @@ function TaskForm({ selectedProjectId, refetchTasks }) {
                 isExpanded ? "bi-caret-down-fill" : "bi-caret-right-fill"
               }`}
             ></i>
-            Add A New Task
+            Create Task
           </h2>
           {isExpanded && (
             <form
