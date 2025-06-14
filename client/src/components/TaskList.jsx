@@ -9,6 +9,7 @@ function TaskList({
   onChecklistChange,
 }) {
   const [expandedTaskId, setExpandedTaskId] = useState(null);
+  const [sortBy, setSortBy] = useState("dateCreated");
 
   const normalizedTasks = tasks.map((task) => ({
     ...task,
@@ -18,6 +19,14 @@ function TaskList({
   const filteredTasks = selectedProjectId
     ? normalizedTasks.filter((task) => task.projectId === selectedProjectId)
     : normalizedTasks;
+
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    if (sortBy === "dueDate") {
+      return new Date(a.dueDate) - new Date(b.dueDate);
+    } else {
+      return new Date(a.dateCreated) - new Date(b.dateCreated);
+    }
+  });
 
   const handleDelete = useCallback(
     async (id) => {
@@ -34,6 +43,10 @@ function TaskList({
   const handleToggleExpand = useCallback((id) => {
     setExpandedTaskId((prev) => (prev === id ? null : id));
   }, []);
+
+  console.log(
+    sortedTasks.map((t) => ({ due: t.dueDate, created: t.dateCreated }))
+  );
 
   return (
     <div
@@ -52,13 +65,25 @@ function TaskList({
             </h2>
           </div>
 
-          {filteredTasks.length === 0 ? (
+          <div className="d-flex justify-content-end mb-2">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="form-select w-auto"
+            >
+              <option disabled>Sort by</option>
+              <option value="dateCreated">Date Added</option>
+              <option value="dueDate">Due Date</option>
+            </select>
+          </div>
+
+          {sortedTasks.length === 0 ? (
             <p className="mb-0 mt-2 d-flex justify-content-center">
               No tasks found.
             </p>
           ) : (
             <ul className="container d-flex flex-column list-group mb-0 mt-2 align-items-center">
-              {filteredTasks.map((task) => (
+              {sortedTasks.map((task) => (
                 <TaskItem
                   key={task.id}
                   task={task}

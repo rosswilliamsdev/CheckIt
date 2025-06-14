@@ -28,7 +28,6 @@ async function getProject(projectId) {
   }
 
   const project = await response.json();
-  console.log("Here's the json from getProject:", project);
   return project;
 }
 

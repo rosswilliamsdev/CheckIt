@@ -16,8 +16,6 @@ function TaskItem({
   const [isEditing, setIsEditing] = useState(false);
   const isExpanded = expandedTaskId === task.id;
 
-  console.log("Task dueDate raw:", task.dueDate);
-
   async function handleDelete() {
     try {
       await onDelete(task.id);
